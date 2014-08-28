@@ -528,7 +528,7 @@ DWORD WINAPI Window::api_watchdog(LPVOID lpParameter)
 {
 	HANDLE t;
 
-	t = CreateThread(NULL,0,set_window_longptr_thread,((API_WATCHDOG*)lpParameter)->parameter,0,NULL);
+	t = CreateThread(NULL,0,((API_WATCHDOG*)lpParameter)->proc,((API_WATCHDOG*)lpParameter)->parameter,0,NULL);
 	if(t)
 	{
 		while(WaitForSingleObject(t,1000) != WAIT_OBJECT_0)

@@ -306,7 +306,48 @@ BOOLEAN GetProcessNameFromId(DWORD id,PTSTR name,size_t name_s)
 	HANDLE s;
 	PROCESSENTRY32 info;
 	BOOL rw;
+	DWORD name_size;
+	BOOL qfpin_result;
+#if (NTDDI_VERSION < NTDDI_VISTA)
+	BOOL (WINAPI *qfpin)(HANDLE, DWORD, LPTSTR, PDWORD);
 
+	HMODULE kernel32 = GetModuleHandle(TEXT("KERNEL32.DLL"));
+#if defined(UNICODE)
+	qfpin = GetProcAddress(kernel32, "QueryFullProcessImageNameW");
+#else
+	qfpin = GetProcAddress(kernel32, "QueryFullProcessImageNameA");
+#endif
+	if(qfpin == NULL)
+	{
+		goto LegacyMethod;
+	}
+#endif
+
+	DWORD ntddi = GetNtDDIVersionOfPlatform();
+	if(ntddi < NTDDI_VISTA)
+	{
+		goto LegacyMethod;
+	}
+
+	s = OpenProcess((ntddi >= NTDDI_VISTA) ? PROCESS_QUERY_LIMITED_INFORMATION : PROCESS_QUERY_INFORMATION, FALSE, id);
+	if(s == NULL)
+	{
+		goto LegacyMethod;
+	}
+
+	name_size = (DWORD)name_s;
+#if (NTDDI_VERSION >= NTDDI_VISTA)
+	qfpin_result = QueryFullProcessImageName(s, PROCESS_NAME_NATIVE, name, &name_size);
+#else
+	qfpin_result = (*qfpin)(s, PROCESS_NAME_NATIVE, name, name_size);
+#endif
+	CloseHandle(s);
+	if(qfpin_result)
+	{
+		return TRUE;
+	}
+
+LegacyMethod:
 	r = FALSE;
 	s = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
 	if(s)

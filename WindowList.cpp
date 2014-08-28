@@ -792,15 +792,15 @@ int WindowList::add(Window *witem)
 		_sntprintf_s(str,256,_TRUNCATE,_T("ID:%u"),witem->GetProcess());
 	}
 	item.iSubItem = 4;
-	item.pszText = _tcsrchr(str,_T('\\'));
-	if(!item.pszText)
-	{
+	//item.pszText = _tcsrchr(str,_T('\\'));
+	//if(!item.pszText)
+	//{
 		item.pszText = str;
-	}
-	else
-	{
-		item.pszText++;
-	}
+	//}
+	//else
+	//{
+	//	item.pszText++;
+	//}
 	ListView_SetItem(listview,&item);
 
 	item.iSubItem = 5;

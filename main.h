@@ -16,6 +16,7 @@ struct MAINWINDOW__TOGGLE
 	bool prevent_power_save;
 	bool cursor_vanish;
 	bool pause_update;
+	bool left_menu;
 };
 
 class MainWindow

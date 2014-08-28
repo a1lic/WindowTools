@@ -235,6 +235,10 @@ void MainWindow::on_command(unsigned int id,unsigned int type,HWND cwindow)
 		case IDC_HELP_ABOUT:
 			DialogBoxParam(p_instance,MAKEINTRESOURCE(IDD_ABOUT),p_window,AboutDialogProc,0);
 			break;
+
+		case IDC_OPTION_TOGGLELEFTMENU:
+			SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, (PVOID)(p_toggle.left_menu ? FALSE : TRUE), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+			break;
 		}
 	}
 }
@@ -300,7 +304,7 @@ void MainWindow::on_enter_menu_loop()
 	item_info.fState = (style & WS_VISIBLE) ? MFS_UNCHECKED : MFS_CHECKED;
 	SetMenuItemInfo(p_menu,IDC_VIEW_TOGGLE_INVISIBLE,FALSE,&item_info);
 
-	item_info.fState = ((style & WS_POPUP) && (exstyle & WS_EX_TOOLWINDOW)) ? MFS_CHECKED : MFS_UNCHECKED;
+	item_info.fState = ((style & WS_POPUP) && (exstyle & WS_EX_TOOLWINDOW)) ? MFS_UNCHECKED : MFS_CHECKED;
 	SetMenuItemInfo(p_menu,IDC_VIEW_TOGGLE_TOOLBARS,FALSE,&item_info);
 
 	item_info.fState = p_list->IsShowNoTitleWindow() ? MFS_CHECKED : MFS_UNCHECKED;
@@ -319,6 +323,7 @@ void MainWindow::on_enter_menu_loop()
 	p_toggle.monitor_power = TO_BOOLEAN(GetSysParametersBoolean(SPI_GETPOWEROFFACTIVE));
 	p_toggle.monitor_power_low = TO_BOOLEAN(GetSysParametersBoolean(SPI_GETLOWPOWERACTIVE));
 	p_toggle.cursor_vanish = TO_BOOLEAN(GetSysParametersBoolean(SPI_GETMOUSEVANISH));
+	p_toggle.left_menu = TO_BOOLEAN(GetSysParametersBoolean(SPI_GETMENUDROPALIGNMENT));
 	exstyle = (DWORD)GetWindowLongPtr(p_window,GWL_EXSTYLE);
 
 	CheckMenuItem2(p_menu,IDC_OPTION_TOPMOST,exstyle & WS_EX_TOPMOST);
@@ -331,6 +336,7 @@ void MainWindow::on_enter_menu_loop()
 	CheckMenuItem2(p_menu,IDC_OPTION_PREVENT_POWERSAVE,p_toggle.prevent_power_save);
 	CheckMenuItem2(p_menu,IDC_OPTION_TOGGLEVANISH,p_toggle.cursor_vanish);
 	CheckMenuItem2(p_menu,IDC_OPTION_PAUSE,p_toggle.pause_update);
+	CheckMenuItem2(p_menu, IDC_OPTION_TOGGLELEFTMENU, p_toggle.left_menu);
 }
 
 LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -574,10 +580,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 #if _WIN32_WINNT >= 0x600  && defined(ENABLE_THUMBNAIL)
 	ATOM         thumb_atom;
 #endif
-	STARTUPINFO  StartupInfo;
-	PROCESS_INFORMATION ProcessInfo;
-	BOOL         Result;
-	TCHAR        *Cmd;
+	//STARTUPINFO  StartupInfo;
+	//PROCESS_INFORMATION ProcessInfo;
+	//BOOL         Result;
+	//TCHAR        *Cmd;
 	int          quit_code;
 	bool         loaded_oem_normal_icon;
 	bool         loaded_oem_small_icon;
@@ -586,6 +592,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	LocalHeapInitialize();
 	InitCommonControls();
 
+#if 0
 	memset(&StartupInfo, 0, sizeof(STARTUPINFO));
 	StartupInfo.cb = sizeof(STARTUPINFO);
 	Cmd = new TCHAR[MAX_PATH];
@@ -597,6 +604,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		::CloseHandle(ProcessInfo.hThread);
 	}
 	delete [] Cmd;
+#endif
 
 	ntdll = LoadLibrary(TEXT("NTDLL.DLL"));
 	if(ntdll)
