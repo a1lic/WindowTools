@@ -1,4 +1,6 @@
 /transwin
 /x64
+/ARM
+/Win32
 *.suo
 *.sdf
