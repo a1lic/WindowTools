@@ -166,6 +166,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="ctx.c" />
     <ClCompile Include="dyntdll.c" />
     <ClCompile Include="main.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="WindowStatusBar.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppConfig.h" />
     <ClInclude Include="ctx.h" />
     <ClInclude Include="dyntdll.h" />
     <ClInclude Include="main.h" />
