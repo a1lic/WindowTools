@@ -276,6 +276,9 @@ ULONG QueryTimerResolutions(ULONG *pmin,ULONG *pmax,ULONG *pcur)
 INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
 	INT_PTR r;
+	OSVERSIONINFOEX version;
+	TCHAR *str;
+	TCHAR *newstr;
 
 	r = FALSE;
 	switch(uMsg)
@@ -295,6 +298,17 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lPa
 
 	case WM_INITDIALOG:
 		CenteringWindowToParent(hwndDlg,(HWND)GetWindowLongPtr(hwndDlg,GWLP_HWNDPARENT));
+		memset(&version, 0, sizeof(OSVERSIONINFOEX));
+		version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+		GetVersionEx(&version);
+		str = malloc(sizeof(TCHAR) * 1024);
+		newstr = malloc(sizeof(TCHAR) * 256);
+		GetDlgItemText(hwndDlg, 33, str, 1024);
+		_stprintf_s(newstr, 256, _T("\r\nRunning in Windows version %d.%d.%d."), version.dwMajorVersion, version.dwMinorVersion, version.dwBuildNumber);
+		_tcscat_s(str, 1024, newstr);
+		SetDlgItemText(hwndDlg, 33, str);
+		free(newstr);
+		free(str);
 		r = TRUE;
 	}
 	return r;
