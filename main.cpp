@@ -72,18 +72,23 @@ void MainWindow::on_destroy()
 
 void MainWindow::on_move(unsigned int x, unsigned int y)
 {
-	this->p_pos.x = x;
-	this->p_pos.y = y;
+	RECT r;
+
+	::GetWindowRect(this->p_window, &r);
+	this->p_pos.x = r.left;
+	this->p_pos.y = r.top;
 }
 
 void MainWindow::on_size(unsigned int width, unsigned int height)
 {
 	HWND listview;
+	RECT r;
 
 	if(!(::IsZoomed(this->p_window) || ::IsIconic(this->p_window)))
 	{
-		this->p_size.cx = width;
-		this->p_size.cy = height;
+		::GetWindowRect(this->p_window, &r);
+		this->p_size.cx = r.right - r.left;
+		this->p_size.cy = r.bottom - r.top;
 	}
 
 	::SendMessage(this->p_status->GetWindowHandle(), WM_SIZE, MAKELONG(width, height), 0);
