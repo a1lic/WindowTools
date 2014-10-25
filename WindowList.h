@@ -91,6 +91,7 @@ private:
 	int add(Window*);
 	LPARAM item_param(int);
 	bool check_style(HWND,DWORD*,DWORD*);
+	void get_info_tip(NMLVGETINFOTIP*);
 	static BOOL CALLBACK update_child_list(HWND,LPARAM);
 	static BOOL CALLBACK update_window_list(HWND,LPARAM);
 	static int CALLBACK sort_items(LPARAM,LPARAM,LPARAM);

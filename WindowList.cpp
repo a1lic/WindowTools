@@ -392,6 +392,9 @@ LRESULT WindowList::Notify(const NMHDR *nm)
 	case LVN_COLUMNCLICK:
 		Sort(((const NMLISTVIEW*)nm)->iSubItem);
 		break;
+	case LVN_GETINFOTIP:
+		get_info_tip((NMLVGETINFOTIP*)nm);
+		break;
 #if _WIN32_WINNT >= 0x600
 	case LVN_COLUMNDROPDOWN:
 		// 未対応だとそもそもこの処理が行われないのでバージョンチェックは無し
@@ -792,15 +795,15 @@ int WindowList::add(Window *witem)
 		_sntprintf_s(str,256,_TRUNCATE,_T("ID:%u"),witem->GetProcess());
 	}
 	item.iSubItem = 4;
-	//item.pszText = _tcsrchr(str,_T('\\'));
-	//if(!item.pszText)
-	//{
+	item.pszText = _tcsrchr(str,_T('\\'));
+	if(!item.pszText)
+	{
 		item.pszText = str;
-	//}
-	//else
-	//{
-	//	item.pszText++;
-	//}
+	}
+	else
+	{
+		item.pszText++;
+	}
 	ListView_SetItem(listview,&item);
 
 	item.iSubItem = 5;
@@ -851,6 +854,10 @@ bool WindowList::check_style(HWND window,DWORD *r_style,DWORD *r_extend_style)
 	style ^= WS_VISIBLE;
 
 	return !((style & styles_mask) || (extend_style & extend_styles_mask));
+}
+
+void WindowList::get_info_tip(NMLVGETINFOTIP *infotip)
+{
 }
 
 BOOL CALLBACK WindowList::update_child_list(HWND hwnd,LPARAM lParam)
