@@ -55,10 +55,14 @@ private:
 	HWND p_target;
 	POINT p_pos;
 	SIZE p_size;
+	POINT p_client_pos;
+	SIZE p_client_size;
 	TCHAR *p_caption_text;
 	SIZEDIALOGAPPLY p_callback;
 	void *p_callback_param;
 	bool p_do_apply;
+	bool p_is_client_pos;
+	bool p_is_client_size;
 
 private:
 	SizeDialog(HWND);

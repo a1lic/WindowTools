@@ -178,30 +178,31 @@ void SizeDialog::do_initdialog(LPARAM l)
 	SendMessage(p_ypos,UDM_SETRANGE32,-32768,32767);
 	SendMessage(p_height,UDM_SETRANGE32,0,ival);
 
-	client_metrics = ((0x8000 & GetAsyncKeyState(VK_SHIFT)) == 0x8000);
-	if(client_metrics)
-	{
-		GetClientRectAsScreenPos(p_target,&r);
-	}
-	else
-	{
-		GetWindowRect(p_target,&r);
-	}
-
+	::GetWindowRect(p_target, &r);
 	p_pos.x = r.left;
 	p_pos.y = r.top;
 	p_size.cx = r.right - r.left;
 	p_size.cy = r.bottom - r.top;
+
+	::GetClientRectAsScreenPos(this->p_target, &r);
+	p_client_pos.x = r.left;
+	p_client_pos.y = r.top;
+	p_client_size.cx = r.right - r.left;
+	p_client_size.cy = r.bottom - r.top;
 
 	SendMessage(p_xpos,UDM_SETPOS32,0,p_pos.x);
 	SendMessage(p_ypos,UDM_SETPOS32,0,p_pos.y);
 	SendMessage(p_width,UDM_SETPOS32,0,p_size.cx);
 	SendMessage(p_height,UDM_SETPOS32,0,p_size.cy);
 
+	client_metrics = ((0x8000 & GetAsyncKeyState(VK_SHIFT)) == 0x8000);
 	if(client_metrics)
 	{
 		SendDlgItemMessage(p_dialog,IDC_POS_CLIENT,BM_SETCHECK,BST_CHECKED,0);
 		SendDlgItemMessage(p_dialog,IDC_SIZE_CLIENT,BM_SETCHECK,BST_CHECKED,0);
+
+		this->p_is_client_pos = true;
+		this->p_is_client_size = true;
 	}
 
 	p_caption_text = (TCHAR*)calloc(1024,sizeof(TCHAR));
