@@ -365,6 +365,25 @@ void MainWindow::on_enter_menu_loop()
 	::CheckMenuItem2(this->p_menu, IDC_OPTION_TOGGLELEFTMENU, this->p_toggle.left_menu);
 }
 
+void MainWindow::on_moving(RECT * r)
+{
+	RECT rc;
+	POINT pt;
+
+	::GetCursorPos(&pt);
+	r->left = this->p_rect_start.left + (pt.x - this->p_dragcurpos.x);
+	r->top = this->p_rect_start.top + (pt.y - this->p_dragcurpos.y);
+	r->right = r->left + (this->p_rect_start.right - this->p_rect_start.left);
+	r->bottom = r->top + (this->p_rect_start.bottom - this->p_rect_start.top);
+	SnapWindow(this->p_window, r, 4, nullptr);
+}
+
+void MainWindow::on_enter_size_move()
+{
+	::GetCursorPos(&this->p_dragcurpos);
+	::GetWindowRect(this->p_window, &this->p_rect_start);
+}
+
 LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	MainWindow *_this;
@@ -445,6 +464,14 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 	case WM_ENTERMENULOOP: // 0x0211
 		_this->on_enter_menu_loop();
+		break;
+
+	case WM_MOVING: // 0x0216
+		_this->on_moving((RECT*)lParam);
+		break;
+
+	case WM_ENTERSIZEMOVE: // 0x0231
+		_this->on_enter_size_move();
 		break;
 
 	default:

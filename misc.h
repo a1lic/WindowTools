@@ -11,6 +11,15 @@
 #endif
 #endif
 
+struct SnapWindowInfo
+{
+	HWND hwnd;
+	RECT rcOriginal;
+	RECT rcNearest;
+	HWND hwndExclude;
+};
+typedef struct SnapWindowInfo SnapWindowInfo;
+
 struct UNICODE_STRING
 {
 	USHORT Length;
@@ -60,6 +69,10 @@ EXTERN_C void LocalHeapFree(void*);
 EXTERN_C void LocalHeapDump();
 EXTERN_C void DumpHeapStatus(HANDLE heap);
 EXTERN_C void DumpAllHeapsStatus();
+
+EXTERN_C void SnapWindow(HWND, RECT *, int, HWND);
+EXTERN_C BOOL CALLBACK SnapWindowProc(HWND, LPARAM);
+EXTERN_C BOOLEAN IsWindowEdgeVisible(HWND, HWND, const RECT *, HWND);
 
 #define TO_BOOLEAN(e) ((uintptr_t)(e) != 0)
 

@@ -28,6 +28,8 @@ private:
 	HWND p_window;
 	POINT p_pos;
 	SIZE p_size;
+	POINT p_dragcurpos;
+	RECT p_rect_start;
 	WindowList *p_list;
 	WindowStatusBar *p_status;
 	HMENU p_menu;
@@ -56,6 +58,8 @@ private:
 	void on_command(unsigned int, unsigned int, HWND);
 	void on_timer(UINT_PTR);
 	void on_enter_menu_loop();
+	void on_moving(RECT*);
+	void on_enter_size_move();
 	static LRESULT CALLBACK window_proc(HWND, UINT, WPARAM, LPARAM);
 	static const WNDCLASSEX window_class_t;
 
