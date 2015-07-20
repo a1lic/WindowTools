@@ -282,7 +282,7 @@ void MainWindow::on_timer(UINT_PTR id)
 			if(this->p_timer_res != res)
 			{
 				this->p_timer_res = res;
-				_sntprintf_s(timer_res_text,32,_TRUNCATE,_T("タイマーの解像度:%u00 ns"),res);
+				_stprintf_s(timer_res_text, 32, _T("タイマーの解像度:%u00 ns"), res);
 				this->p_status->SetText(0, timer_res_text);
 			}
 		}
@@ -305,7 +305,7 @@ void MainWindow::on_timer(UINT_PTR id)
 			if(c != this->p_item_count)
 			{
 				this->p_item_count = c;
-				_sntprintf_s(timer_res_text, 32, _TRUNCATE, _T("%u のウィンドウ"), this->p_item_count);
+				_stprintf_s(timer_res_text, 32, _T("%u のウィンドウ"), this->p_item_count);
 				this->p_status->SetText(1, timer_res_text);
 			}
 		}
@@ -688,7 +688,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	ntdll = ::LoadLibrary(TEXT("NTDLL.DLL"));
 	if(ntdll)
 	{
-		u_NtQueryTimerResolution.FuncPointer = GetProcAddress(ntdll, "NtQueryTimerResolution");
+		u_NtQueryTimerResolution.FuncPointer = ::GetProcAddress(ntdll, "NtQueryTimerResolution");
 	}
 
 	// アイコンをリソースから読み込む
