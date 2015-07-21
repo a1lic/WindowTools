@@ -449,7 +449,7 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		break;
 
 	case WM_COMMAND: // 0x0111
-		_this->on_command(LOWORD(wParam), HIWORD(wParam), (HWND)lParam);
+		_this->on_command(LOWORD(wParam), HIWORD(wParam), reinterpret_cast<HWND>(lParam));
 		break;
 
 	case WM_TIMER: // 0x112
