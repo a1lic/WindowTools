@@ -199,15 +199,15 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOGGLECURSHADOW:
-			::SystemParametersInfo(SPI_SETCURSORSHADOW, 0, (PVOID)(this->p_toggle.cursor_shadow ? FALSE : TRUE), 0);
+			::SystemParametersInfo(SPI_SETCURSORSHADOW, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.cursor_shadow ? FALSE : TRUE)), 0);
 			break;
 
 		case IDC_OPTION_TOGGLEHOTTRACK:
-			::SystemParametersInfo(SPI_SETHOTTRACKING, 0, (PVOID)(this->p_toggle.hot_tracking ? FALSE : TRUE), SPIF_SENDWININICHANGE);
+			::SystemParametersInfo(SPI_SETHOTTRACKING, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.hot_tracking ? FALSE : TRUE)), SPIF_SENDWININICHANGE);
 			break;
 
 		case IDC_OPTION_TOGGLEWINDOWSHADOW:
-			::SystemParametersInfo(SPI_SETDROPSHADOW, 0, (PVOID)(this->p_toggle.window_shadow ? FALSE : TRUE), SPIF_SENDWININICHANGE);
+			::SystemParametersInfo(SPI_SETDROPSHADOW, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.window_shadow ? FALSE : TRUE)), SPIF_SENDWININICHANGE);
 			break;
 
 		case IDC_OPTION_TOGGLEMONITORPOWER:
@@ -242,7 +242,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOGGLEVANISH:
-			::SystemParametersInfo(SPI_SETMOUSEVANISH, 0, reinterpret_cast<PVOID>(this->p_toggle.cursor_vanish ? FALSE : TRUE), SPIF_SENDWININICHANGE);
+			::SystemParametersInfo(SPI_SETMOUSEVANISH, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.cursor_vanish ? FALSE : TRUE)), SPIF_SENDWININICHANGE);
 			break;
 
 		case IDC_OPTION_PAUSE:
@@ -262,7 +262,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOGGLELEFTMENU:
-			::SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, reinterpret_cast<PVOID>(this->p_toggle.left_menu ? FALSE : TRUE), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+			::SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.left_menu ? FALSE : TRUE)), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
 			break;
 		}
 	}
