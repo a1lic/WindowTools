@@ -7,7 +7,7 @@ WindowStatusBar::WindowStatusBar(HWND parent,UINT id)
 	HINSTANCE instance;
 
 	instance = (HINSTANCE)GetWindowLongPtr(parent,GWLP_HINSTANCE);
-	p_statusbar = CreateWindowEx(0,STATUSCLASSNAME,NULL,WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,0,0,0,0,parent,(HMENU)id,instance,NULL);
+	p_statusbar = CreateWindowEx(0,STATUSCLASSNAME,NULL,WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,0,0,0,0,parent,reinterpret_cast<HMENU>(static_cast<intptr_t>(id)),instance,NULL);
 
 	if(p_statusbar)
 	{

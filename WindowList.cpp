@@ -93,7 +93,7 @@ WindowList::WindowList(HWND parent,UINT id,HWND target)
 	process_id = GetCurrentProcessId();
 	instance = (HINSTANCE)GetWindowLongPtr(parent,GWLP_HINSTANCE);
 
-	listview = CreateWindowEx(WS_EX_CLIENTEDGE,WC_LISTVIEW,NULL,WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_REPORT | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_SINGLESEL,0,0,0,0,parent,(HMENU)id,instance,NULL);
+	listview = CreateWindowEx(WS_EX_CLIENTEDGE,WC_LISTVIEW,NULL,WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_REPORT | LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS | LVS_SINGLESEL,0,0,0,0,parent,reinterpret_cast<HMENU>(static_cast<intptr_t>(id)),instance,NULL);
 	if(!listview)
 	{
 		return;
