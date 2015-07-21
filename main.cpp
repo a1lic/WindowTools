@@ -28,7 +28,7 @@ typedef struct THREAD_PARAM THREAD_PARAM;
 bool MainWindow::on_create()
 {
 	::SetLastError(0);
-	if(::SetWindowLongPtr(this->p_window, 0, (LONG_PTR)this) == 0)
+	if(::SetWindowLongPtr(this->p_window, 0, reinterpret_cast<LONG_PTR>(this)) == 0)
 	{
 		if(::GetLastError() != ERROR_SUCCESS)
 		{
@@ -190,7 +190,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOPMOST:
-			exstyle = (DWORD)GetWindowLongPtr(this->p_window, GWL_EXSTYLE);
+			exstyle = static_cast<DWORD>(::GetWindowLongPtr(this->p_window, GWL_EXSTYLE));
 			::SetWindowPos(this->p_window, (exstyle & WS_EX_TOPMOST) ? HWND_NOTOPMOST : HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 			break;
 
@@ -242,7 +242,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOGGLEVANISH:
-			::SystemParametersInfo(SPI_SETMOUSEVANISH, 0, (PVOID)(this->p_toggle.cursor_vanish ? FALSE : TRUE), SPIF_SENDWININICHANGE);
+			::SystemParametersInfo(SPI_SETMOUSEVANISH, 0, reinterpret_cast<PVOID>(this->p_toggle.cursor_vanish ? FALSE : TRUE), SPIF_SENDWININICHANGE);
 			break;
 
 		case IDC_OPTION_PAUSE:
@@ -262,7 +262,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_OPTION_TOGGLELEFTMENU:
-			::SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, (PVOID)(this->p_toggle.left_menu ? FALSE : TRUE), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+			::SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, reinterpret_cast<PVOID>(this->p_toggle.left_menu ? FALSE : TRUE), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
 			break;
 		}
 	}
@@ -282,7 +282,7 @@ void MainWindow::on_timer(UINT_PTR id)
 			if(this->p_timer_res != res)
 			{
 				this->p_timer_res = res;
-				_stprintf_s(timer_res_text, 32, _T("タイマーの解像度:%u00 ns"), res);
+				::_stprintf_s(timer_res_text, 32, _T("タイマーの解像度:%u00 ns"), res);
 				this->p_status->SetText(0, timer_res_text);
 			}
 		}
@@ -305,7 +305,7 @@ void MainWindow::on_timer(UINT_PTR id)
 			if(c != this->p_item_count)
 			{
 				this->p_item_count = c;
-				_stprintf_s(timer_res_text, 32, _T("%u のウィンドウ"), this->p_item_count);
+				::_stprintf_s(timer_res_text, 32, _T("%u のウィンドウ"), this->p_item_count);
 				this->p_status->SetText(1, timer_res_text);
 			}
 		}
@@ -350,7 +350,7 @@ void MainWindow::on_enter_menu_loop()
 	this->p_toggle.cursor_vanish = TO_BOOLEAN(::GetSysParametersBoolean(SPI_GETMOUSEVANISH));
 	this->p_toggle.left_menu = TO_BOOLEAN(::GetSysParametersBoolean(SPI_GETMENUDROPALIGNMENT));
 
-	exstyle = (DWORD)GetWindowLongPtr(this->p_window, GWL_EXSTYLE);
+	exstyle = static_cast<DWORD>(::GetWindowLongPtr(this->p_window, GWL_EXSTYLE));
 
 	::CheckMenuItem2(this->p_menu, IDC_OPTION_TOPMOST, exstyle & WS_EX_TOPMOST);
 	::CheckMenuItem2(this->p_menu, IDC_OPTION_TOGGLEIMEBAR, this->p_toggle.ime_ui);
@@ -388,13 +388,13 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	MainWindow *_this;
 	LRESULT     r;
 
-	_this = (MainWindow*)::GetWindowLongPtr(hwnd, 0);
+	_this = reinterpret_cast<MainWindow *>(::GetWindowLongPtr(hwnd, 0));
 	r = 0;
 
 	switch(uMsg)
 	{
 	case WM_CREATE: // 0x0001
-		_this = (MainWindow*)((const CREATESTRUCT*)lParam)->lpCreateParams;
+		_this = reinterpret_cast<MainWindow *>(reinterpret_cast<const CREATESTRUCT *>(lParam)->lpCreateParams);
 		_this->p_window = hwnd;
 		if(!_this->on_create())
 		{
@@ -430,19 +430,19 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_GETMINMAXINFO: // 0x0024
 		if(_this)
 		{
-			_this->on_get_minmax_info((MINMAXINFO*)lParam);
+			_this->on_get_minmax_info(reinterpret_cast<MINMAXINFO *>(lParam));
 		}
 		break;
 
 	case WM_NOTIFY: // 0x004E
-		if((((const NMHDR*)lParam)->idFrom == 1))
+		if(reinterpret_cast<const NMHDR *>(lParam)->idFrom == 1)
 		{
-			r = _this->p_list->Notify((const NMHDR*)lParam);
+			r = _this->p_list->Notify(reinterpret_cast<const NMHDR *>(lParam));
 		}
 		break;
 
 	case WM_CONTEXTMENU: // 0x007B
-		if(!_this->on_contextmenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam)))
+		if(!_this->on_contextmenu(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam)))
 		{
 			r = ::DefWindowProc(hwnd, WM_CONTEXTMENU, wParam, lParam);
 		}
@@ -453,7 +453,7 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		break;
 
 	case WM_TIMER: // 0x112
-		_this->on_timer((UINT_PTR)wParam);
+		_this->on_timer(static_cast<UINT_PTR>(wParam));
 		break;
 
 	case WM_LBUTTONUP: // 0x0202
@@ -466,7 +466,7 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		break;
 
 	case WM_MOVING: // 0x0216
-		_this->on_moving((RECT*)lParam);
+		_this->on_moving(reinterpret_cast<RECT *>(lParam));
 		break;
 
 	case WM_ENTERSIZEMOVE: // 0x0231
@@ -627,9 +627,9 @@ unsigned __stdcall main_window_thread(void *arg)
 	HWND        window;
 	HHOOK       hook;
 
-	rarg = new MainWindow(((const THREAD_PARAM*)arg)->instance);
+	rarg = new MainWindow(reinterpret_cast<const THREAD_PARAM *>(arg)->instance);
 
-	window = rarg->ShowWindow2(((const THREAD_PARAM*)arg)->show);
+	window = rarg->ShowWindow2(reinterpret_cast<const THREAD_PARAM *>(arg)->show);
 	if(window)
 	{
 		hook = ::SetWindowsHookEx(WH_KEYBOARD, kbd_watchdog, nullptr, GetCurrentThreadId());
@@ -647,7 +647,7 @@ unsigned __stdcall main_window_thread(void *arg)
 	}
 
 	delete rarg;
-	return (unsigned)(msg.wParam & 0xFF);
+	return static_cast<unsigned>(msg.wParam & 0xFF);
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
@@ -694,20 +694,20 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	// Windows95、WindowsNT4以降では小さいアイコンも読み込む必要がある
 	wc.hInstance = hInstance;
 	// LoadIconのアイコンサイズはSM_CXICON、SM_CYICON固定なので、LoadImage+GetSystemMetricsでサイズを指定して読み込む
-	wc.hIcon     = (HICON)::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXICON),   GetSystemMetrics(SM_CYICON),   0);
+	wc.hIcon     = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXICON),   GetSystemMetrics(SM_CYICON),   0));
 	if(wc.hIcon == NULL)
 	{
-		wc.hIcon = (HICON)::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_SHARED);
+		wc.hIcon = reinterpret_cast<HICON>(::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_SHARED));
 		loaded_oem_normal_icon = (wc.hIcon != NULL);
 	}
 	else
 	{
 		loaded_oem_normal_icon = false;
 	}
-	wc.hIconSm   = (HICON)::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+	wc.hIconSm   = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
 	if(wc.hIconSm == NULL)
 	{
-		wc.hIconSm = (HICON)::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED);
+		wc.hIconSm = reinterpret_cast<HICON>(::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED));
 		loaded_oem_small_icon = (wc.hIconSm != NULL);
 	}
 	else
@@ -724,14 +724,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	p.instance = hInstance;
 	p.show     = nCmdShow;
 
-	quit_code = (int)main_window_thread(&p);
+	quit_code = static_cast<int>(main_window_thread(&p));
 
 	// 後始末
 #if _WIN32_WINNT >= 0x600 && defined(ENABLE_THUMBNAIL)
 	UnregisterClass((LPCTSTR)thumb_atom,hInstance);
 #endif
 
-	::UnregisterClass((LPCTSTR)catom,hInstance);
+	::UnregisterClass(reinterpret_cast<LPCTSTR>(catom), hInstance);
 
 	// アイコンの削除
 	if(loaded_oem_small_icon)
