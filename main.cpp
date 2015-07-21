@@ -515,7 +515,7 @@ MainWindow::MainWindow(HINSTANCE instance)
 	this->p_toggle.cursor_vanish = false;
 	this->p_toggle.pause_update = false;
 
-	file_path = reinterpret_cast<TCHAR *>(::LocalHeapAlloc(65536));
+	file_path = new TCHAR[32768];
 	HResult = ::SHGetFolderPath(this->p_window, CSIDL_APPDATA, nullptr, 0, file_path);
 	if(HResult != S_OK)
 	{
@@ -526,7 +526,7 @@ MainWindow::MainWindow(HINSTANCE instance)
 		::_tcscat_s(file_path, 32768, _T("\\WINTOOL.HIV"));
 		this->config = new ApplicationConfig(file_path);
 	}
-	::LocalHeapFree(file_path);
+	delete [] file_path;
 
 	this->p_pos.x = CW_USEDEFAULT;
 	this->p_size.cx = -1;
