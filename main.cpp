@@ -367,7 +367,6 @@ void MainWindow::on_enter_menu_loop()
 
 void MainWindow::on_moving(RECT * r)
 {
-	RECT rc;
 	POINT pt;
 
 	::GetCursorPos(&pt);

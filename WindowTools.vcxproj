@@ -85,14 +85,14 @@
       <MinimalRebuild>
       </MinimalRebuild>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <CreateHotPatchableImage>Enabled</CreateHotPatchableImage>
       <SetChecksum>true</SetChecksum>
       <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LargeAddressAware>true</LargeAddressAware>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
     </Link>
@@ -109,13 +109,13 @@
       <MinimalRebuild>
       </MinimalRebuild>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <SetChecksum>true</SetChecksum>
       <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LargeAddressAware>true</LargeAddressAware>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
     </Link>
@@ -135,6 +135,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <CreateHotpatchableImage>true</CreateHotpatchableImage>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +144,7 @@
       <CreateHotPatchableImage>Enabled</CreateHotPatchableImage>
       <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
     </Link>
@@ -162,6 +163,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <CreateHotpatchableImage>true</CreateHotpatchableImage>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,7 +171,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
     </Link>

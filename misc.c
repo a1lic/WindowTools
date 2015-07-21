@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <malloc.h>
+#include <math.h>
 #include <tchar.h>
 #include <windows.h>
 //#include <psapi.h>
@@ -16,28 +17,60 @@ HANDLE main_heap;
 void Debug(PCTSTR fmt, ...)
 {
 	va_list ap;
-	TCHAR debug_msg[512];
+	TCHAR * debug_msg;
 
-	if(IsDebuggerPresent())
+	if(!IsDebuggerPresent())
 	{
-		va_start(ap,fmt);
-		_vsntprintf_s(debug_msg,512,_TRUNCATE,fmt,ap);
-		va_end(ap);
-		_tcsncat_s(debug_msg,512,_T("\n"),_TRUNCATE);
-		OutputDebugString(debug_msg);
+		return;
 	}
-}
 
-int MessageBoxf(HWND parent,PCTSTR title,DWORD flags,PCTSTR fmt, ...)
-{
-	va_list ap;
-	TCHAR msg[512];
+	debug_msg = (TCHAR *)calloc(4096, sizeof(TCHAR));
+	if(!debug_msg)
+	{
+		return;
+	}
 
-	va_start(ap,fmt);
-	_vsntprintf_s(msg,512,_TRUNCATE,fmt,ap);
+	va_start(ap, fmt);
+	_vstprintf_s(debug_msg, 4095, fmt, ap);
 	va_end(ap);
 
-	return MessageBox(parent,msg,title,flags);
+	_tcscat_s(debug_msg, 4096, _T("\n"));
+
+	OutputDebugString(debug_msg);
+	free(debug_msg);
+}
+
+int MessageBoxf(HWND parent, PCTSTR title, DWORD flags, PCTSTR fmt, ...)
+{
+	va_list ap;
+	TCHAR * msg;
+	int messagebox_result;
+	BOOLEAN static_buffer;
+	TCHAR msg_s[64];
+
+	msg = (TCHAR *)calloc(4096, sizeof(TCHAR));
+	if(msg)
+	{
+		static_buffer = FALSE;
+	}
+	else
+	{
+		static_buffer = TRUE;
+		msg = msg_s;
+	}
+
+	va_start(ap, fmt);
+	_vstprintf_s(msg, static_buffer ? 64 : 4096, fmt, ap);
+	va_end(ap);
+
+	messagebox_result = MessageBox(parent, msg, title, flags);
+
+	if(!static_buffer)
+	{
+		free(msg);
+	}
+
+	return messagebox_result;
 }
 
 int ListViewGetSelectingIndex(HWND lvd)
@@ -92,7 +125,10 @@ DWORD GetNtDDIVersionOfPlatform()
 	DWORD ddi;
 
 	version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+#pragma warning(push)
+#pragma warning(disable:4996)
 	GetVersionEx((OSVERSIONINFO*)&version);
+#pragma warning(pop)
 
 	ddi = version.dwMajorVersion & 0xFF;
 	ddi = (ddi << 8) | (version.dwMinorVersion & 0xFF);
@@ -300,7 +336,10 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lPa
 		CenteringWindowToParent(hwndDlg,(HWND)GetWindowLongPtr(hwndDlg,GWLP_HWNDPARENT));
 		memset(&version, 0, sizeof(OSVERSIONINFOEX));
 		version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-		GetVersionEx(&version);
+#pragma warning(push)
+#pragma warning(disable:4996)
+		GetVersionEx((OSVERSIONINFO *)&version);
+#pragma warning(pop)
 		str = malloc(sizeof(TCHAR) * 1024);
 		newstr = malloc(sizeof(TCHAR) * 256);
 		GetDlgItemText(hwndDlg, 33, str, 1024);
