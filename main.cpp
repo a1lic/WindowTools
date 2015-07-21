@@ -585,16 +585,26 @@ const WNDCLASSEX MainWindow::window_class_t = {
 	/* lpszClassName */ TEXT("Window Tools"),
 	/* hIconSm       */ nullptr };
 
+unsigned __int64 get_system_time()
+{
+	FILETIME current;
+
+#if (NTDDI_VERSION >= NTDDI_WIN8)
+	::GetSystemTimePreciseAsFileTime(&current);
+#else
+	::GetSystemTimeAsFileTime(&current);
+#endif
+	return (static_cast<unsigned __int64>(current.dwHighDateTime) << 32) + static_cast<unsigned __int64>(current.dwLowDateTime);
+}
+
 LRESULT CALLBACK kbd_watchdog(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	static unsigned long long last_exec;
-	unsigned long long        current_time;
-	FILETIME                  current;
+	static unsigned __int64 last_exec;
+	unsigned __int64        current_time;
 
 	if(nCode == HC_ACTION)
 	{
-		::GetSystemTimeAsFileTime(&current);
-		current_time = ((unsigned long long)current.dwHighDateTime << 32) + current.dwLowDateTime;
+		current_time = get_system_time();
 
 		if(current_time >= last_exec + 10000000ULL)
 		{
