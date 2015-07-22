@@ -2,16 +2,12 @@
 #include <stdio.h>
 #include <Windows.h>
 #include <CommCtrl.h>
-//#include <uxtheme.h>
+#include <Uxtheme.h>
 #include "WindowList.h"
 #include "WindowConfig.h"
 #include "Window.h"
 #include "misc.h"
 #include "resource.h"
-
-#if _WIN32_WINNT < 0x600
-#define LVCFMT_SPLITBUTTON 0
-#endif
 
 const LVCOLUMN WindowList::columns[7] = {
 	/* mask,fmt,cx,pszText,cchTextMax,iSubItem,iImage,iOrder */
@@ -23,7 +19,6 @@ const LVCOLUMN WindowList::columns[7] = {
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 128, TEXT("プロセス"), 0, 0, 0, 0},
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 50, TEXT("Unicode"), 0, 0, 0, 0}};
 
-#if _WIN32_WINNT >= 0x501
 const LVTILEVIEWINFO WindowList::tile_info = {
 	/* cbSize        */ sizeof(LVTILEVIEWINFO),
 	/* dwMask        */ LVTVIM_COLUMNS,
@@ -56,24 +51,14 @@ const LVGROUP WindowList::grp_ansi = {
 	/* uAlign    */ LVGA_HEADER_LEFT};
 
 const UINT WindowList::show_columns[4] = {2, 3, 1, 4};
-#if _WIN32_WINNT >= 0x600
 const int WindowList::show_columns_formats[4] = {LVCFMT_LEFT, LVCFMT_RIGHT, LVCFMT_LEFT, LVCFMT_LEFT};
-#endif
 
 const LVTILEINFO WindowList::tile_info2 = {
-#if _WIN32_WINNT >= 0x600
 	/* cbSize    */ sizeof(LVTILEINFO),
 	/* iItem     */ 0,
 	/* cColumns  */ 4,
 	/* puColumns */ (PUINT)WindowList::show_columns,
-	/* piColFmt  */ (int *)WindowList::show_columns_formats};
-#elif _WIN32_WINNT >= 0x501
-	/* cbSize    */ sizeof(LVTILEINFO),
-	/* iItem     */ 0,
-	/* cColumns  */ 4,
-	/* puColumns */ (PUINT)WindowList::show_columns};
-#endif
-#endif
+	/* piColFmt  */ (int *)WindowList::show_columns_formats };
 
 WindowList::WindowList(HWND parent, UINT id, HWND target)
 {
@@ -84,10 +69,6 @@ WindowList::WindowList(HWND parent, UINT id, HWND target)
 	UINT imagelist_flags;
 #if !defined(UNICODE)
 	LVCOLUMN columns[7];
-#endif
-#if !defined(_UXTHEME_H_)
-	HMODULE uxtheme;
-	SETWINDOWTHEME * _SetWindowTheme;
 #endif
 
 	process_id = GetCurrentProcessId();
@@ -101,44 +82,14 @@ WindowList::WindowList(HWND parent, UINT id, HWND target)
 
 	this->parent = parent;
 
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-#if defined(_UXTHEME_H_)
-		SetWindowTheme(listview, L"Explorer", NULL);
-#else
-		uxtheme = LoadLibrary(TEXT("UXTHEME.DLL"));
-		if(uxtheme)
-		{
-			_SetWindowTheme = (SETWINDOWTHEME *)GetProcAddress(uxtheme, "SetWindowTheme");
-			if(_SetWindowTheme)
-			{
-				(*_SetWindowTheme)(listview, L"Explorer", NULL);
-			}
-			FreeLibrary(uxtheme);
-		}
-#endif
-	}
+	SetWindowTheme(listview, L"Explorer", NULL);
 
 #if !defined(UNICODE)
 	// Unicodeの場合はLVCOLUMNがconstでもよいが、Unicodeでない時はクラッシュする
 	memcpy(columns, this->columns, sizeof(LVCOLUMN) * 7);
 #endif
 
-#if _WIN32_WINNT >= 0x600
-	if(OSFeatureTest(OSF_LISTVIEW_NT60))
-	{
-		ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_HEADERINALLVIEWS | LVS_EX_DOUBLEBUFFER);
-	}
-	else if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	}
-#elif _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	}
-#endif
+	ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_HEADERINALLVIEWS | LVS_EX_DOUBLEBUFFER);
 
 	for(i = 0; i < 7; i++)
 	{
@@ -146,14 +97,9 @@ WindowList::WindowList(HWND parent, UINT id, HWND target)
 	}
 	ListView_DeleteColumn(listview, 0);
 
-#if _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		ListView_EnableGroupView(listview, TRUE);
-		ListView_InsertGroup(listview, -1, &grp_unicode);
-		ListView_InsertGroup(listview, -1, &grp_ansi);
-	}
-#endif
+	ListView_EnableGroupView(listview, TRUE);
+	ListView_InsertGroup(listview, -1, &grp_unicode);
+	ListView_InsertGroup(listview, -1, &grp_ansi);
 
 	view_mode = LVS_REPORT;
 	sorted_column = 0;
@@ -166,14 +112,7 @@ WindowList::WindowList(HWND parent, UINT id, HWND target)
 	icons[0] = (HICON)CopyImage((HANDLE)LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, x[0], y[0], LR_SHARED), IMAGE_ICON, 0, 0, 0);
 	icons[1] = (HICON)CopyImage((HANDLE)LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, x[1], y[1], LR_SHARED), IMAGE_ICON, 0, 0, 0);
 
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		imagelist_flags = ILC_MASK | ILC_COLOR32;
-	}
-	else
-	{
-		imagelist_flags = ILC_MASK | ILC_COLOR8;
-	}
+	imagelist_flags = ILC_MASK | ILC_COLOR32;
 
 	normal_icons = ImageList_Create(x[0], y[0], imagelist_flags, 1, 256);
 	if(normal_icons)
@@ -247,38 +186,19 @@ char WindowList::GetViewMode()
 
 void WindowList::SetViewMode(char mode)
 {
-	DWORD style;
-
-#if _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
+	ListView_SetView(listview, mode);
+	if(mode == LV_VIEW_TILE)
 	{
-		ListView_SetView(listview, mode);
-		if(mode == LV_VIEW_TILE)
-		{
-			ListView_SetTileViewInfo(listview, &tile_info);
-		}
-		if(mode == LV_VIEW_DETAILS)
-		{
-			ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-		}
-		else
-		{
-			ListView_SetExtendedListViewStyleEx(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER,LVS_EX_DOUBLEBUFFER);
-		}
+		ListView_SetTileViewInfo(listview, &tile_info);
+	}
+	if(mode == LV_VIEW_DETAILS)
+	{
+		ListView_SetExtendedListViewStyle(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	}
 	else
 	{
-		style = (DWORD)GetWindowLongPtr(listview, GWL_STYLE);
-		style &= ~LVS_TYPEMASK;
-		style |= (mode & LVS_TYPEMASK);
-		SetWindowLongPtr(listview, GWL_STYLE, style);
+		ListView_SetExtendedListViewStyleEx(listview, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER, LVS_EX_DOUBLEBUFFER);
 	}
-#else
-	style = (DWORD)GetWindowLongPtr(listview, GWL_STYLE);
-	style &= ~LVS_TYPEMASK;
-	style |= (mode & LVS_TYPEMASK);
-	SetWindowLongPtr(listview, GWL_STYLE, style);
-#endif
 
 	view_mode = mode;
 }
@@ -743,13 +663,7 @@ int WindowList::add(Window * witem)
 
 	depth = witem->GetDepth();
 
-	item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-#if _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		item.mask |= LVIF_GROUPID;
-	}
-#endif
+	item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_GROUPID;
 	if(depth > 0)
 	{
 		item.mask |= LVIF_INDENT;
@@ -765,12 +679,7 @@ int WindowList::add(Window * witem)
 	}
 	item.lParam = (LPARAM)witem;
 
-#if _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		item.iGroupId = witem->IsUnicodeWindow() ? 1 : 2;
-	}
-#endif
+	item.iGroupId = witem->IsUnicodeWindow() ? 1 : 2;
 	i = ListView_InsertItem(listview, &item);
 	if(i == -1)
 	{
@@ -810,24 +719,12 @@ int WindowList::add(Window * witem)
 	item.pszText = witem->IsUnicodeWindow() ? TEXT("対応") : TEXT("非対応");
 	ListView_SetItem(listview, &item);
 
-#if _WIN32_WINNT >= 0x501
-	if(OSFeatureTest(OSF_LISTVIEW_NT51))
+	tile_info_l = tile_info2;
+	tile_info_l.iItem = item.iItem;
+	if(!ListView_SetTileInfo(listview, &tile_info_l))
 	{
-		tile_info_l = tile_info2;
-#if _WIN32_WINNT >= 0x600
-		// サイズが正しくないと、Vista未満の環境ではLVM_SETTILEINFOで失敗する
-		if(!OSFeatureTest(OSF_LISTVIEW_NT60))
-		{
-			tile_info_l.cbSize = LVTILEINFO_V5_SIZE;
-		}
-#endif
-		tile_info_l.iItem = item.iItem;
-		if(!ListView_SetTileInfo(listview, &tile_info_l))
-		{
-			Debug(TEXT("ListView_SetTileInfo failed. iItem=%u"), item.iItem);
-		}
+		Debug(TEXT("ListView_SetTileInfo failed. iItem=%u"), item.iItem);
 	}
-#endif
 
 	LocalHeapFree(class_name);
 	LocalHeapFree(title);

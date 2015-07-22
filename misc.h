@@ -45,8 +45,6 @@ EXTERN_C int MessageBoxf(HWND, PCTSTR, DWORD, PCTSTR, ...);
 EXTERN_C int ListViewGetSelectingIndex(HWND);
 EXTERN_C LPARAM ListViewGetLPARAM(HWND, int);
 EXTERN_C void ListViewUpdateItemString(HWND, int, int, PCTSTR);
-EXTERN_C DWORD GetNtDDIVersionOfPlatform();
-EXTERN_C BOOLEAN OSFeatureTest(DWORD);
 EXTERN_C BOOLEAN GetSysParametersBoolean(int);
 EXTERN_C void CheckMenuItem2(HMENU, int, BOOLEAN);
 EXTERN_C void CenteringWindow(HWND, const POINT *);

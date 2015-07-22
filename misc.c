@@ -118,53 +118,6 @@ void ListViewUpdateItemString(HWND listview, int item, int sub_item, PCTSTR text
 	}
 }
 
-DWORD GetNtDDIVersionOfPlatform()
-{
-	OSVERSIONINFOEX version;
-	DWORD ddi;
-
-	version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-#pragma warning(push)
-#pragma warning(disable:4996)
-	GetVersionEx((OSVERSIONINFO*)&version);
-#pragma warning(pop)
-
-	ddi = version.dwMajorVersion & 0xFF;
-	ddi = (ddi << 8) | (version.dwMinorVersion & 0xFF);
-	ddi = (ddi << 8) | (version.wServicePackMajor & 0xFF);
-	ddi = (ddi << 8) | (version.wServicePackMinor & 0xFF);
-
-	return ddi;
-}
-
-BOOLEAN OSFeatureTest(DWORD flags)
-{
-	DWORD v;
-
-	if(feature_flags != OSF_OK)
-	{
-		v = GetNtDDIVersionOfPlatform();
-		feature_flags = OSF_OK;
-		if(v >= 0x40A0000) /* Windows98 */
-		{
-			feature_flags |= OSF_MON_98;
-		}
-		if(v >= NTDDI_WIN2K)
-		{
-			feature_flags |= OSF_GUI_NT5;
-		}
-		if(v >= NTDDI_WINXP)
-		{
-			feature_flags |= (OSF_GUI_NT51 | OSF_LISTVIEW_NT51);
-		}
-		if(v >= NTDDI_VISTA)
-		{
-			feature_flags |= OSF_LISTVIEW_NT60;
-		}
-	}
-	return ((feature_flags & flags) == flags);
-}
-
 void CenteringWindow(HWND window, const POINT * pos)
 {
 	/* ウィンドウの中心点がposで指定した位置に来るように移動する */
@@ -175,15 +128,7 @@ void CenteringWindow(HWND window, const POINT * pos)
 
 	p = *pos;
 	/* 指定した点のあるモニタ */
-	if(OSFeatureTest(OSF_MON_98))
-	{
-		monitor = MonitorFromPoint(p,MONITOR_DEFAULTTONEAREST);
-	}
-	else
-	{
-		monitor = NULL;
-	}
-
+	monitor = MonitorFromPoint(p, MONITOR_DEFAULTTONEAREST);
 	if(monitor)
 	{
 		/* そのモニタに映っている作業領域の大きさを調べる */
@@ -343,54 +288,13 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	return r;
 }
 
-BOOLEAN GetProcessNameFromId(DWORD id, PTSTR name, size_t name_s)
+BOOLEAN GetProcessNameFromIdLegacy(DWORD id, PTSTR name, size_t name_s)
 {
 	BOOLEAN r;
 	HANDLE s;
 	PROCESSENTRY32 info;
 	BOOL rw;
-	DWORD name_size;
-	BOOL qfpin_result;
-#if (NTDDI_VERSION < NTDDI_VISTA)
-	BOOL (WINAPI *qfpin)(HANDLE, DWORD, LPTSTR, PDWORD);
 
-	HMODULE kernel32 = GetModuleHandle(TEXT("KERNEL32.DLL"));
-#if defined(UNICODE)
-	qfpin = GetProcAddress(kernel32, "QueryFullProcessImageNameW");
-#else
-	qfpin = GetProcAddress(kernel32, "QueryFullProcessImageNameA");
-#endif
-	if(qfpin == NULL)
-	{
-		goto LegacyMethod;
-	}
-#endif
-
-	DWORD ntddi = GetNtDDIVersionOfPlatform();
-	if(ntddi < NTDDI_VISTA)
-	{
-		goto LegacyMethod;
-	}
-
-	s = OpenProcess((ntddi >= NTDDI_VISTA) ? PROCESS_QUERY_LIMITED_INFORMATION : PROCESS_QUERY_INFORMATION, FALSE, id);
-	if(s == NULL)
-	{
-		goto LegacyMethod;
-	}
-
-	name_size = (DWORD)name_s;
-#if (NTDDI_VERSION >= NTDDI_VISTA)
-	qfpin_result = QueryFullProcessImageName(s, PROCESS_NAME_NATIVE, name, &name_size);
-#else
-	qfpin_result = (*qfpin)(s, PROCESS_NAME_NATIVE, name, name_size);
-#endif
-	CloseHandle(s);
-	if(qfpin_result)
-	{
-		return TRUE;
-	}
-
-LegacyMethod:
 	r = FALSE;
 	s = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if(s)
@@ -408,6 +312,25 @@ LegacyMethod:
 		CloseHandle(s);
 	}
 	return r;
+}
+
+BOOLEAN GetProcessNameFromId(DWORD id, PTSTR name, size_t name_s)
+{
+	HANDLE s;
+	DWORD name_size;
+	BOOL qfpin_result;
+
+	s = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, id);
+	if(s == NULL)
+	{
+		return GetProcessNameFromIdLegacy(id, name, name_s);
+	}
+
+	name_size = (DWORD)name_s;
+	qfpin_result = QueryFullProcessImageName(s, PROCESS_NAME_NATIVE, name, &name_size);
+	CloseHandle(s);
+
+	return qfpin_result;
 }
 
 void CleanupListView(HWND window, HANDLE heap)

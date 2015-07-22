@@ -161,10 +161,7 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 			break;
 
 		case IDC_VIEW_TILE:
-			if(::OSFeatureTest(OSF_LISTVIEW_NT51))
-			{
-				this->p_list->SetViewMode(LV_VIEW_TILE);
-			}
+			this->p_list->SetViewMode(LV_VIEW_TILE);
 			break;
 
 		case IDC_VIEW_TOGGLE_INVISIBLE:
@@ -324,11 +321,8 @@ void MainWindow::on_enter_menu_loop()
 	item_info.fState = p_list->IsShowNoTitleWindow() ? MFS_CHECKED : MFS_UNCHECKED;
 	::SetMenuItemInfo(this->p_menu, IDC_VIEW_TOGGLE_NOTITLE, FALSE, &item_info);
 
-	if(!::OSFeatureTest(OSF_LISTVIEW_NT51))
-	{
-		item_info.fState = MFS_GRAYED;
-		::SetMenuItemInfo(this->p_menu, IDC_VIEW_TILE, FALSE, &item_info);
-	}
+	item_info.fState = MFS_GRAYED;
+	::SetMenuItemInfo(this->p_menu, IDC_VIEW_TILE, FALSE, &item_info);
 
 	this->p_toggle.ime_ui = TO_BOOLEAN(::GetSysParametersBoolean(SPI_GETSHOWIMEUI));
 	this->p_toggle.cursor_shadow = TO_BOOLEAN(::GetSysParametersBoolean(SPI_GETCURSORSHADOW));

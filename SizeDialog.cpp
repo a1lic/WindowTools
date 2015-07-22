@@ -142,39 +142,16 @@ void SizeDialog::do_initdialog(LPARAM l)
 	item = SendMessage(p_monitor, CB_ADDSTRING, 0, (LPARAM)TEXT("すべてのモニタ"));
 	SendMessage(p_monitor, CB_SETITEMDATA, item, 0);
 
-	if(OSFeatureTest(OSF_MON_98))
-	{
-		mp.current_monitor = MonitorFromWindow(p_target, MONITOR_DEFAULTTONEAREST);
-		EnumDisplayMonitors(NULL, NULL, enum_monitors, (LPARAM)&mp);
-	}
-	else
-	{
-		SendMessage(p_monitor, CB_SETCURSEL, 0, 0);
-		EnableWindow(GetDlgItem(p_dialog, IDC_DISPLAY_LABEL), FALSE);
-		EnableWindow(p_monitor, FALSE);
-	}
+	mp.current_monitor = MonitorFromWindow(p_target, MONITOR_DEFAULTTONEAREST);
+	EnumDisplayMonitors(NULL, NULL, enum_monitors, (LPARAM)&mp);
 
 	/* 仮想画面の幅と左端の座標 */
-	if(OSFeatureTest(OSF_MON_98))
-	{
-		ival = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-	}
-	else
-	{
-		ival = GetSystemMetrics(SM_CXSCREEN);
-	}
+	ival = GetSystemMetrics(SM_CXVIRTUALSCREEN);
 	SendMessage(p_xpos, UDM_SETRANGE32, -32768, 32767);
 	SendMessage(p_width, UDM_SETRANGE32, 0, ival);
 
 	/* 仮想画面の高さと上端の座標 */
-	if(OSFeatureTest(OSF_MON_98))
-	{
-		ival = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-	}
-	else
-	{
-		ival = GetSystemMetrics(SM_CYSCREEN);
-	}
+	ival = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 	SendMessage(p_ypos, UDM_SETRANGE32, -32768, 32767);
 	SendMessage(p_height, UDM_SETRANGE32, 0, ival);
 
@@ -411,27 +388,17 @@ void SizeDialog::calc_window_position(ULONG flags, HMONITOR monitor, RECT * r)
 	mi = NULL;
 #endif
 
-	if(OSFeatureTest(OSF_MON_98))
+	if(monitor)
 	{
-		if(monitor)
-		{
-			mi.cbSize = sizeof(MONITORINFO);
-			GetMonitorInfo(monitor, &mi);
-		}
-		else
-		{
-			mi.rcWork.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
-			mi.rcWork.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
-			mi.rcWork.right = GetSystemMetrics(SM_CXVIRTUALSCREEN) - mi.rcWork.left;
-			mi.rcWork.bottom = GetSystemMetrics(SM_CYVIRTUALSCREEN) - mi.rcWork.top;
-		}
+		mi.cbSize = sizeof(MONITORINFO);
+		GetMonitorInfo(monitor, &mi);
 	}
 	else
 	{
-		mi.rcWork.left = 0;
-		mi.rcWork.top = 0;
-		mi.rcWork.right = GetSystemMetrics(SM_CXSCREEN);
-		mi.rcWork.bottom = GetSystemMetrics(SM_CYSCREEN);
+		mi.rcWork.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
+		mi.rcWork.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
+		mi.rcWork.right = GetSystemMetrics(SM_CXVIRTUALSCREEN) - mi.rcWork.left;
+		mi.rcWork.bottom = GetSystemMetrics(SM_CYVIRTUALSCREEN) - mi.rcWork.top;
 	}
 
 	if(flags & CWPF_FULLWIDTH)

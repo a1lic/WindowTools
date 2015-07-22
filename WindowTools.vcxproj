@@ -91,7 +91,7 @@
       <SubSystem>Windows</SubSystem>
       <CreateHotPatchableImage>Enabled</CreateHotPatchableImage>
       <SetChecksum>true</SetChecksum>
-      <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
     </Link>
@@ -115,7 +115,7 @@
       <SetChecksum>true</SetChecksum>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile />
     <Manifest>
@@ -139,7 +139,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <CreateHotPatchableImage>Enabled</CreateHotPatchableImage>
-      <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
@@ -165,7 +165,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
