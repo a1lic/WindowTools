@@ -1,9 +1,9 @@
 ﻿#include <string.h>
 #include <tchar.h>
-#include <windows.h>
+#include <Windows.h>
 #include "ctx.h"
 
-typedef HANDLE (WINAPI CREATEACTCTX)(ACTCTX*);
+typedef HANDLE (WINAPI CREATEACTCTX)(ACTCTX *);
 
 /*
 指定した実行ファイルのリソースからマニフェストをファイルに書き出す
@@ -13,11 +13,11 @@ CreateActCtxに渡す構造体のlpSourceにFilePathを指定する
 
 BOOLEAN ExportManifest(HINSTANCE Module, PTSTR FilePath, size_t FilePathSize)
 {
-	TCHAR   TempPath[MAX_PATH], TempFilePath[MAX_PATH];
-	void   *ResourceData;
-	HANDLE  TempFile;
-	HRSRC   Resource;
-	DWORD   ResourceSize;
+	TCHAR TempPath[MAX_PATH], TempFilePath[MAX_PATH];
+	void * ResourceData;
+	HANDLE TempFile;
+	HRSRC Resource;
+	DWORD ResourceSize;
 
 	/* Type=24、ID=2のリソース(DLL用マニフェスト) */
 	Resource = FindResource((HMODULE)Module, MAKEINTRESOURCE(2), MAKEINTRESOURCE(24));
@@ -36,7 +36,7 @@ BOOLEAN ExportManifest(HINSTANCE Module, PTSTR FilePath, size_t FilePathSize)
 	{
 		return FALSE;
 	}
-	ResourceData = (void*)LoadResource((HMODULE)Module, Resource);
+	ResourceData = (void *)LoadResource((HMODULE)Module, Resource);
 	if(!ResourceData)
 	{
 		return FALSE;
@@ -65,11 +65,11 @@ BOOLEAN ExportManifest(HINSTANCE Module, PTSTR FilePath, size_t FilePathSize)
 */
 HANDLE CreateContextFromManifest(HINSTANCE Module)
 {
-	TCHAR         TempFile[MAX_PATH];
-	ACTCTX        Context;
-	HANDLE        Handle;
-	HINSTANCE     Kernel32;
-	CREATEACTCTX *DCreateActCtx;
+	TCHAR TempFile[MAX_PATH];
+	ACTCTX Context;
+	HANDLE Handle;
+	HINSTANCE Kernel32;
+	CREATEACTCTX * DCreateActCtx;
 
 	Kernel32 = LoadLibrary(TEXT("KERNEL32.DLL"));
 	if(!Kernel32)
@@ -77,7 +77,7 @@ HANDLE CreateContextFromManifest(HINSTANCE Module)
 		return INVALID_HANDLE_VALUE;
 	}
 
-	DCreateActCtx = (CREATEACTCTX*)GetProcAddress(Kernel32, "CreateActCtx");
+	DCreateActCtx = (CREATEACTCTX *)GetProcAddress(Kernel32, "CreateActCtx");
 	if(!DCreateActCtx)
 	{
 		FreeLibrary(Kernel32);

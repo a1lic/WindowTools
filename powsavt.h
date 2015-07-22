@@ -1,8 +1,7 @@
-﻿#ifndef POWSAVT_H
-#define POWSAVT_H
+﻿#pragma once
 
 #include <tchar.h>
-#include <windows.h>
+#include <Windows.h>
 
 #if !defined(EXTERN_C)
 #if defined(__cplusplus)
@@ -19,6 +18,4 @@ struct POWSAVT_DLG_PARAM
 };
 typedef struct POWSAVT_DLG_PARAM POWSAVT_DLG_PARAM;
 
-EXTERN_C void ShowPowerSaveTimerDialog(HWND,HINSTANCE);
-
-#endif
+EXTERN_C void ShowPowerSaveTimerDialog(HWND, HINSTANCE);

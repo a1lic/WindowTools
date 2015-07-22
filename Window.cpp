@@ -1,7 +1,7 @@
 ﻿#include <tchar.h>
 #include <string.h>
-#include <windows.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 #include "Window.h"
 #include "WindowList.h"
 #include "Thumbnail.h"
@@ -11,37 +11,24 @@ Window::Window(HWND handle_arg)
 {
 	LARGE_INTEGER pc;
 	HWND t_handle;
-	//SHFILEINFO info;
-	//TCHAR module_name[MAX_PATH];
 
 	QueryPerformanceCounter(&pc);
 	item_time_stamp = pc.QuadPart;
 
 	is_unicode_window = TO_BOOLEAN(IsWindowUnicode(handle_arg));
-	GetWindowThreadProcessId(handle_arg,&process);
+	GetWindowThreadProcessId(handle_arg, &process);
 	e_icon = NULL;
-
-/*
-	if(GetProcessNameFromId(process,module_name,MAX_PATH))
-	{
-		if(SHGetFileInfo(module_name,0,&info,sizeof(SHFILEINFO),SHGFI_ICON | SHGFI_SMALLICON))
-		{
-			e_icon = info.hIcon;
-		}
-	}
-	Debug(TEXT("%s:e_icon = %p"),module_name,e_icon);
-*/
 
 	handle = handle_arg;
 	depth = 0;
 	if(GetStyle() & WS_CHILD)
 	{
-		parent_handle = (HWND)GetWindowLongPtr(handle,GWLP_HWNDPARENT);
+		parent_handle = (HWND)GetWindowLongPtr(handle, GWLP_HWNDPARENT);
 		t_handle = parent_handle;
-		while(GetWindowLongPtr(t_handle,GWL_STYLE) & WS_CHILD)
+		while(GetWindowLongPtr(t_handle, GWL_STYLE) & WS_CHILD)
 		{
 			depth++;
-			t_handle = (HWND)GetWindowLongPtr(t_handle,GWLP_HWNDPARENT);
+			t_handle = (HWND)GetWindowLongPtr(t_handle, GWLP_HWNDPARENT);
 			if(!t_handle)
 			{
 				break;
@@ -89,52 +76,52 @@ void Window::UpdateIcon()
 	}
 }
 
-INT_PTR Window::SendMsg(UINT message,WPARAM w,LPARAM l)
+INT_PTR Window::SendMsg(UINT message, WPARAM w, LPARAM l)
 {
-	return SendMessage(handle,message,w,l);
+	return SendMessage(handle, message, w, l);
 }
 
-bool Window::SendMsg(UINT message,WPARAM w,LPARAM l,UINT time,DWORD_PTR *ret)
+bool Window::SendMsg(UINT message, WPARAM w, LPARAM l, UINT time, DWORD_PTR * ret)
 {
 	DWORD_PTR dummy;
-	return (bool)(SendMessageTimeout(handle,message,w,l,SMTO_ABORTIFHUNG,time,ret ? ret : &dummy) != 0);
+	return (bool)(SendMessageTimeout(handle, message, w, l, SMTO_ABORTIFHUNG, time, ret ? ret : &dummy) != 0);
 }
 
-void Window::PostMsg(UINT message,WPARAM w,LPARAM l)
+void Window::PostMsg(UINT message, WPARAM w, LPARAM l)
 {
-	PostMessage(handle,message,w,l);
+	PostMessage(handle, message, w, l);
 }
 
 void Window::Iconic()
 {
-	ShowWindow(handle,SW_MINIMIZE);
+	ShowWindow(handle, SW_MINIMIZE);
 }
 
 void Window::Maximize()
 {
-	ShowWindow(handle,SW_MAXIMIZE);
+	ShowWindow(handle, SW_MAXIMIZE);
 }
 
 void Window::Restore()
 {
-	ShowWindowAsync(handle,SW_RESTORE);
+	ShowWindowAsync(handle, SW_RESTORE);
 }
 
 void Window::BringToTop()
 {
-	SetWindowPos(handle,HWND_TOP,0,0,0,0,SWP_NOMOVE | SWP_NOSIZE);
+	SetWindowPos(handle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void Window::SinkToBottom()
 {
-	SetWindowPos(handle,HWND_BOTTOM,0,0,0,0,SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+	SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
-void Window::GetWindowLocation(POINT *pos,SIZE *size)
+void Window::GetWindowLocation(POINT * pos, SIZE * size)
 {
 	RECT window_rect;
 
-	GetWindowRect(handle,&window_rect);
+	GetWindowRect(handle, &window_rect);
 	if(pos)
 	{
 		pos->x = window_rect.left;
@@ -142,22 +129,22 @@ void Window::GetWindowLocation(POINT *pos,SIZE *size)
 	}
 	if(size)
 	{
-		OffsetRect(&window_rect,-window_rect.left,-window_rect.top);
+		OffsetRect(&window_rect, -window_rect.left, -window_rect.top);
 		size->cx = window_rect.right;
 		size->cy = window_rect.bottom;
 	}
 }
 
-void Window::GetClientLocation(POINT *pos,SIZE *size)
+void Window::GetClientLocation(POINT * pos, SIZE * size)
 {
 	RECT client_rect;
 
-	GetClientRect(handle,&client_rect);
+	GetClientRect(handle, &client_rect);
 	if(TO_BOOLEAN(pos))
 	{
 		pos->x = 0;
 		pos->y = 0;
-		ClientToScreen(handle,pos);
+		ClientToScreen(handle, pos);
 	}
 	if(TO_BOOLEAN(size))
 	{
@@ -166,10 +153,10 @@ void Window::GetClientLocation(POINT *pos,SIZE *size)
 	}
 }
 
-void Window::SetWindowLocation(const POINT *pos,const SIZE *size)
+void Window::SetWindowLocation(const POINT * pos, const SIZE * size)
 {
-	int x,y;
-	unsigned int w,h;
+	int x, y;
+	unsigned int w, h;
 	UINT flags;
 
 	flags = SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER;
@@ -185,16 +172,16 @@ void Window::SetWindowLocation(const POINT *pos,const SIZE *size)
 		h = size->cy;
 		flags ^= SWP_NOSIZE;
 	}
-	SetWindowPos(handle,NULL,x,y,w,h,flags);
+	SetWindowPos(handle, NULL, x, y, w, h, flags);
 }
 
-void Window::SetClientLocation(const POINT *pos,const SIZE *size)
+void Window::SetClientLocation(const POINT * pos, const SIZE * size)
 {
-	POINT npos,wpos,cpos;
-	SIZE nsize,wsize,csize;
+	POINT npos, wpos, cpos;
+	SIZE nsize, wsize, csize;
 
-	GetWindowLocation(&wpos,&wsize);
-	GetClientLocation(&cpos,&csize);
+	GetWindowLocation(&wpos, &wsize);
+	GetClientLocation(&cpos, &csize);
 
 	if(pos)
 	{
@@ -210,41 +197,41 @@ void Window::SetClientLocation(const POINT *pos,const SIZE *size)
 	}
 }
 
-void Window::Move(const POINT *pos)
+void Window::Move(const POINT * pos)
 {
-	SetWindowLocation(pos,NULL);
+	SetWindowLocation(pos, NULL);
 }
 
-void Window::ClientMove(const POINT *pos)
+void Window::ClientMove(const POINT * pos)
 {
-	SetClientLocation(pos,NULL);
+	SetClientLocation(pos, NULL);
 }
 
-void Window::Resize(const SIZE *size)
+void Window::Resize(const SIZE * size)
 {
-	SetWindowLocation(NULL,size);
+	SetWindowLocation(NULL, size);
 }
 
-void Window::ClientResize(const SIZE *size)
+void Window::ClientResize(const SIZE * size)
 {
-	SetClientLocation(NULL,size);
+	SetClientLocation(NULL, size);
 }
 
 DWORD Window::GetStyle()
 {
-	return (DWORD)GetWindowLongPtr(handle,GWL_STYLE);
+	return (DWORD)GetWindowLongPtr(handle, GWL_STYLE);
 }
 
 void Window::SetStyle(DWORD new_style)
 {
 	HANDLE t;
-	API_WATCHDOG *awd;
-	SET_WINDOW_LONGPTR_PARAMS *wlp;
+	API_WATCHDOG * awd;
+	SET_WINDOW_LONGPTR_PARAMS * wlp;
 
-	awd = (API_WATCHDOG*)LocalHeapAlloc(sizeof(API_WATCHDOG));
+	awd = (API_WATCHDOG *)LocalHeapAlloc(sizeof(API_WATCHDOG));
 	if(awd)
 	{
-		wlp = (SET_WINDOW_LONGPTR_PARAMS*)LocalHeapAlloc(sizeof(SET_WINDOW_LONGPTR_PARAMS));
+		wlp = (SET_WINDOW_LONGPTR_PARAMS *)LocalHeapAlloc(sizeof(SET_WINDOW_LONGPTR_PARAMS));
 		if(wlp)
 		{
 			awd->proc = set_window_longptr_thread;
@@ -254,7 +241,7 @@ void Window::SetStyle(DWORD new_style)
 			wlp->nIndex = GWL_STYLE;
 			wlp->dwNewLong = new_style;
 
-			t = CreateThread(NULL,0,api_watchdog,awd,0,NULL);
+			t = CreateThread(NULL, 0, api_watchdog, awd, 0, NULL);
 			if(t)
 			{
 				CloseHandle(t);
@@ -269,19 +256,19 @@ void Window::SetStyle(DWORD new_style)
 
 DWORD Window::GetExtendStyle()
 {
-	return (DWORD)GetWindowLongPtr(handle,GWL_EXSTYLE);
+	return (DWORD)GetWindowLongPtr(handle, GWL_EXSTYLE);
 }
 
 void Window::SetExtendStyle(DWORD new_extend_style)
 {
 	HANDLE t;
-	API_WATCHDOG *awd;
-	SET_WINDOW_LONGPTR_PARAMS *wlp;
+	API_WATCHDOG * awd;
+	SET_WINDOW_LONGPTR_PARAMS * wlp;
 
-	awd = (API_WATCHDOG*)LocalHeapAlloc(sizeof(API_WATCHDOG));
+	awd = (API_WATCHDOG *)LocalHeapAlloc(sizeof(API_WATCHDOG));
 	if(awd)
 	{
-		wlp = (SET_WINDOW_LONGPTR_PARAMS*)LocalHeapAlloc(sizeof(SET_WINDOW_LONGPTR_PARAMS));
+		wlp = (SET_WINDOW_LONGPTR_PARAMS *)LocalHeapAlloc(sizeof(SET_WINDOW_LONGPTR_PARAMS));
 		if(wlp)
 		{
 			awd->proc = set_window_longptr_thread;
@@ -291,7 +278,7 @@ void Window::SetExtendStyle(DWORD new_extend_style)
 			wlp->nIndex = GWL_EXSTYLE;
 			wlp->dwNewLong = new_extend_style;
 
-			t = CreateThread(NULL,0,api_watchdog,awd,0,NULL);
+			t = CreateThread(NULL, 0, api_watchdog, awd, 0, NULL);
 			if(t)
 			{
 				CloseHandle(t);
@@ -326,7 +313,7 @@ PTSTR Window::GetCaption()
 		n++;
 		if(caption = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n))
 		{
-			GetWindowText(handle,caption,n);
+			GetWindowText(handle, caption, n);
 		}
 	}
 	else
@@ -339,20 +326,20 @@ PTSTR Window::GetCaption()
 void Window::SetCaption(PCTSTR new_caption)
 {
 	HANDLE t;
-	API_WATCHDOG *awd;
-	WM_SETTEXT_PARAMS *wst;
-	TCHAR *new_caption_c;
+	API_WATCHDOG * awd;
+	WM_SETTEXT_PARAMS * wst;
+	TCHAR * new_caption_c;
 	unsigned short l;
 
-	awd = (API_WATCHDOG*)LocalHeapAlloc(sizeof(API_WATCHDOG));
+	awd = (API_WATCHDOG *)LocalHeapAlloc(sizeof(API_WATCHDOG));
 	if(awd)
 	{
 		l = (unsigned short)_tcsnlen(new_caption, 0x7FFE) + 1;
-		new_caption_c = (TCHAR*)LocalHeapAlloc(sizeof(TCHAR) * l);
+		new_caption_c = (TCHAR *)LocalHeapAlloc(sizeof(TCHAR) * l);
 		if(new_caption_c)
 		{
-			_tcsncpy_s(new_caption_c,l,new_caption,_TRUNCATE);
-			wst = (WM_SETTEXT_PARAMS*)LocalHeapAlloc(sizeof(WM_SETTEXT_PARAMS));
+			_tcsncpy_s(new_caption_c, l, new_caption, _TRUNCATE);
+			wst = (WM_SETTEXT_PARAMS *)LocalHeapAlloc(sizeof(WM_SETTEXT_PARAMS));
 			if(wst)
 			{
 				awd->proc = set_caption_thread;
@@ -362,7 +349,7 @@ void Window::SetCaption(PCTSTR new_caption)
 				wst->hWnd = handle;
 				wst->lParam = new_caption_c;
 
-				t = CreateThread(NULL,0,api_watchdog,awd,0,NULL);
+				t = CreateThread(NULL, 0, api_watchdog, awd, 0, NULL);
 				if(t)
 				{
 					CloseHandle(t);
@@ -386,12 +373,12 @@ PTSTR Window::GetClassName2()
 	TCHAR tmp_class_name[256];
 	PTSTR class_name;
 
-	if(n = GetClassName(handle,tmp_class_name,256))
+	if(n = GetClassName(handle, tmp_class_name, 256))
 	{
 		n++;
 		if(class_name = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n))
 		{
-			_tcsncpy_s(class_name,n,tmp_class_name,_TRUNCATE);
+			_tcsncpy_s(class_name, n, tmp_class_name, _TRUNCATE);
 		}
 	}
 	else
@@ -402,7 +389,7 @@ PTSTR Window::GetClassName2()
 	return class_name;
 }
 
-void Window::GetDispInfo(NMLVDISPINFO *info,WindowList *list)
+void Window::GetDispInfo(NMLVDISPINFO * info,WindowList * list)
 {
 	char mode;
 	if(info->item.mask & LVIF_IMAGE)
@@ -410,12 +397,12 @@ void Window::GetDispInfo(NMLVDISPINFO *info,WindowList *list)
 		mode = list->GetViewMode();
 		if(w_icon && ((mode == LVS_ICON) || (mode == LV_VIEW_TILE)))
 		{
-			ImageList_ReplaceIcon(list->GetImageList(false),1,((Window*)info->item.lParam)->GetIcon());
+			ImageList_ReplaceIcon(list->GetImageList(false), 1, ((Window *)info->item.lParam)->GetIcon());
 			info->item.iImage = 1;
 		}
 		else if(w_icon_small && (mode != LVS_ICON))
 		{
-			ImageList_ReplaceIcon(list->GetImageList(true),1,((Window*)info->item.lParam)->GetCaptionIcon());
+			ImageList_ReplaceIcon(list->GetImageList(true), 1, ((Window *)info->item.lParam)->GetCaptionIcon());
 			info->item.iImage = 1;
 		}
 		else
@@ -440,7 +427,7 @@ HICON Window::get_icon_handle(bool small_icon)
 
 	if(small_icon)
 	{
-		if(SendMsg(WM_GETICON,ICON_SMALL,0,100,(PDWORD_PTR)&icon))
+		if(SendMsg(WM_GETICON, ICON_SMALL, 0, 100,(PDWORD_PTR)&icon))
 		{
 			if(icon)
 			{
@@ -448,7 +435,7 @@ HICON Window::get_icon_handle(bool small_icon)
 			}
 		}
 #if _WIN32_WINNT >= 0x501
-		if(SendMsg(WM_GETICON,ICON_SMALL2,0,100,(PDWORD_PTR)&icon))
+		if(SendMsg(WM_GETICON, ICON_SMALL2, 0, 100, (PDWORD_PTR)&icon))
 		{
 			if(icon)
 			{
@@ -459,7 +446,7 @@ HICON Window::get_icon_handle(bool small_icon)
 	}
 	else
 	{
-		if(SendMsg(WM_GETICON,ICON_BIG,0,100,(PDWORD_PTR)&icon))
+		if(SendMsg(WM_GETICON, ICON_BIG, 0, 100, (PDWORD_PTR)&icon))
 		{
 			if(icon)
 			{
@@ -468,7 +455,7 @@ HICON Window::get_icon_handle(bool small_icon)
 		}
 	}
 
-	if(icon = (HICON)GetClassLongPtr(handle,small_icon ? GCLP_HICONSM : GCLP_HICON))
+	if(icon = (HICON)GetClassLongPtr(handle, small_icon ? GCLP_HICONSM : GCLP_HICON))
 	{
 		return icon;
 	}
@@ -478,49 +465,49 @@ HICON Window::get_icon_handle(bool small_icon)
 
 DWORD WINAPI Window::set_caption_thread(LPVOID lpParameter)
 {
-	SendMessage(((const WM_SETTEXT_PARAMS*)lpParameter)->hWnd,WM_SETTEXT,0,(LPARAM)((const WM_SETTEXT_PARAMS*)lpParameter)->lParam);
+	SendMessage(((const WM_SETTEXT_PARAMS *)lpParameter)->hWnd, WM_SETTEXT, 0, (LPARAM)((const WM_SETTEXT_PARAMS *)lpParameter)->lParam);
 	return 0;
 }
 
 DWORD WINAPI Window::set_window_longptr_thread(LPVOID lpParameter)
 {
-	DWORD old_style,new_style;
+	DWORD old_style, new_style;
 
-	if(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->nIndex == GWL_STYLE)
+	if(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->nIndex == GWL_STYLE)
 	{
-		new_style = (DWORD)(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->dwNewLong & 0xFFFFFFFFUL);
-		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,GWL_STYLE);
+		new_style = (DWORD)(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->dwNewLong & 0xFFFFFFFFUL);
+		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd,GWL_STYLE);
 		if((new_style & WS_MAXIMIZE) && !(old_style & WS_MAXIMIZE))
 		{
-			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,SW_MAXIMIZE);
+			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, SW_MAXIMIZE);
 		}
 		else if((new_style & WS_MINIMIZE) && !(old_style & WS_MINIMIZE))
 		{
-			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,SW_MINIMIZE);
+			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, SW_MINIMIZE);
 		}
 		else
 		{
-			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,SW_RESTORE);
+			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, SW_RESTORE);
 		}
 		new_style &= ~(WS_MAXIMIZE | WS_MINIMIZE);
 	}
-	else if(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->nIndex == GWL_EXSTYLE)
+	else if(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->nIndex == GWL_EXSTYLE)
 	{
-		new_style = (DWORD)(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->dwNewLong & 0xFFFFFFFFUL);
-		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,GWL_EXSTYLE);
+		new_style = (DWORD)(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->dwNewLong & 0xFFFFFFFFUL);
+		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, GWL_EXSTYLE);
 		if((new_style & WS_EX_TOPMOST) && !(old_style & WS_EX_TOPMOST))
 		{
-			SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+			SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 		}
 		else if(!(new_style & WS_EX_TOPMOST) && (old_style & WS_EX_TOPMOST))
 		{
-			SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+			SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 		}
 		new_style &= ~WS_EX_TOPMOST;
 	}
 
-	SetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->nIndex,new_style);
-	SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS*)lpParameter)->hWnd,NULL,0,0,0,0,SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, ((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->nIndex, new_style);
+	SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 	return 0;
 }
 
@@ -528,25 +515,25 @@ DWORD WINAPI Window::api_watchdog(LPVOID lpParameter)
 {
 	HANDLE t;
 
-	t = CreateThread(NULL,0,((API_WATCHDOG*)lpParameter)->proc,((API_WATCHDOG*)lpParameter)->parameter,0,NULL);
+	t = CreateThread(NULL, 0, ((API_WATCHDOG *)lpParameter)->proc, ((API_WATCHDOG *)lpParameter)->parameter, 0, NULL);
 	if(t)
 	{
-		while(WaitForSingleObject(t,1000) != WAIT_OBJECT_0)
+		while(WaitForSingleObject(t, 1000) != WAIT_OBJECT_0)
 		{
-			if(!--(((API_WATCHDOG*)lpParameter)->timeout_sec))
+			if(!--(((API_WATCHDOG *)lpParameter)->timeout_sec))
 			{
-				if(WaitForSingleObject(t,0) != WAIT_OBJECT_0)
+				if(WaitForSingleObject(t, 0) != WAIT_OBJECT_0)
 				{
-					TerminateThread(t,0);
+					TerminateThread(t, 0);
 					break;
 				}
 			}
 		}
 		CloseHandle(t);
 	}
-	if(((API_WATCHDOG*)lpParameter)->parameter)
+	if(((API_WATCHDOG *)lpParameter)->parameter)
 	{
-		LocalHeapFree(((API_WATCHDOG*)lpParameter)->parameter);
+		LocalHeapFree(((API_WATCHDOG *)lpParameter)->parameter);
 	}
 	LocalHeapFree(lpParameter);
 	return 0;

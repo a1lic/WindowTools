@@ -3,8 +3,8 @@
 #include <string.h>
 #include <malloc.h>
 #include <tchar.h>
-#include <windows.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 #include "misc.h"
 #include "resource.h"
 #include "SizeDialog.h"
@@ -15,7 +15,7 @@ SizeDialog::SizeDialog(HWND hwnd)
 	p_ref = 1;
 
 	p_dialog = hwnd;
-	p_parent = (HWND)GetWindowLongPtr(p_dialog,GWLP_HWNDPARENT);
+	p_parent = (HWND)GetWindowLongPtr(p_dialog, GWLP_HWNDPARENT);
 }
 
 SizeDialog::~SizeDialog()
@@ -43,9 +43,9 @@ intptr_t SizeDialog::Release()
 	return p_ref;
 }
 
-INT_PTR CALLBACK SizeDialog::DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
+INT_PTR CALLBACK SizeDialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	SizeDialog *_this;
+	SizeDialog * _this;
 	INT_PTR r;
 
 #if defined(ZEROFILL_LOCAL_VARS)
@@ -56,16 +56,16 @@ INT_PTR CALLBACK SizeDialog::DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 	switch(uMsg)
 	{
 	case WM_DESTROY:
-		_this = (SizeDialog*)GetProp(hwndDlg,TEXT("DialogClassPtr"));
+		_this = (SizeDialog *)GetProp(hwndDlg, TEXT("DialogClassPtr"));
 		_ASSERT(_this != NULL);
 		_this->do_destroy();
 		r = TRUE;
 		break;
 
 	case WM_NOTIFY:
-		_this = (SizeDialog*)GetProp(hwndDlg,TEXT("DialogClassPtr"));
+		_this = (SizeDialog *)GetProp(hwndDlg, TEXT("DialogClassPtr"));
 		_ASSERT(_this != NULL);
-		_this->do_notify((NMHDR*)lParam);
+		_this->do_notify((NMHDR *)lParam);
 		r = TRUE;
 		break;
 
@@ -73,15 +73,15 @@ INT_PTR CALLBACK SizeDialog::DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 		// プロパティシートとして作成した場合、LPARAMはPROPSHEETPAGE構造体となる。
 		_this = new SizeDialog(hwndDlg);
 		_ASSERT(_this != NULL);
-		_this->do_initdialog(((const PROPSHEETPAGE*)lParam)->lParam);
+		_this->do_initdialog(((const PROPSHEETPAGE *)lParam)->lParam);
 		r = TRUE;
 		break;
 
 	case WM_COMMAND:
-		_this = (SizeDialog*)GetProp(hwndDlg,TEXT("DialogClassPtr"));
+		_this = (SizeDialog *)GetProp(hwndDlg, TEXT("DialogClassPtr"));
 		if(_this)
 		{
-			_this->do_command(LOWORD(wParam),HIWORD(wParam),(HWND)lParam);
+			_this->do_command(LOWORD(wParam), HIWORD(wParam), (HWND)lParam);
 			r = TRUE;
 		}
 		else
@@ -100,7 +100,7 @@ INT_PTR CALLBACK SizeDialog::DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 void SizeDialog::do_destroy()
 {
 	Release();
-	RemoveProp(p_dialog,TEXT("DialogClassPtr"));
+	RemoveProp(p_dialog, TEXT("DialogClassPtr"));
 }
 
 void SizeDialog::do_initdialog(LPARAM l)
@@ -114,44 +114,44 @@ void SizeDialog::do_initdialog(LPARAM l)
 #if defined(ZEROFILL_LOCAL_VARS)
 	item = 0;
 	ival = 0;
-	memset(&mp,0,sizeof(ENUMMONITORPARAM));
-	memset(&r,0,sizeof(RECT));
+	memset(&mp, 0, sizeof(ENUMMONITORPARAM));
+	memset(&r, 0, sizeof(RECT));
 	client_metrics = false;
 #endif
 
-	SetProp(p_dialog,TEXT("DialogClassPtr"),(HANDLE)this);
+	SetProp(p_dialog,TEXT("DialogClassPtr"), (HANDLE)this);
 	p_do_apply = false;
 
-	p_target = ((const SIZEDIALOGPARAM*)l)->target;
-	p_caption = GetDlgItem(p_dialog,IDC_CAPTION);
-	p_xpos = GetDlgItem(p_dialog,IDC_SPIN_XPOS);
-	p_ypos = GetDlgItem(p_dialog,IDC_SPIN_YPOS);
-	p_width = GetDlgItem(p_dialog,IDC_SPIN_WIDTH);
-	p_height = GetDlgItem(p_dialog,IDC_SPIN_HEIGHT);
-	p_monitor = GetDlgItem(p_dialog,IDC_DISPLAY);
-	p_callback = ((const SIZEDIALOGPARAM*)l)->callback;
-	p_callback_param = ((const SIZEDIALOGPARAM*)l)->callback_param;
+	p_target = ((const SIZEDIALOGPARAM *)l)->target;
+	p_caption = GetDlgItem(p_dialog, IDC_CAPTION);
+	p_xpos = GetDlgItem(p_dialog, IDC_SPIN_XPOS);
+	p_ypos = GetDlgItem(p_dialog, IDC_SPIN_YPOS);
+	p_width = GetDlgItem(p_dialog, IDC_SPIN_WIDTH);
+	p_height = GetDlgItem(p_dialog, IDC_SPIN_HEIGHT);
+	p_monitor = GetDlgItem(p_dialog, IDC_DISPLAY);
+	p_callback = ((const SIZEDIALOGPARAM *)l)->callback;
+	p_callback_param = ((const SIZEDIALOGPARAM *)l)->callback_param;
 
-	SendMessage(p_caption,EM_LIMITTEXT,1023,0);
-	SendDlgItemMessage(p_dialog,IDC_XPOS,EM_LIMITTEXT,15,0);
-	SendDlgItemMessage(p_dialog,IDC_YPOS,EM_LIMITTEXT,15,0);
-	SendDlgItemMessage(p_dialog,IDC_WIDTH,EM_LIMITTEXT,15,0);
-	SendDlgItemMessage(p_dialog,IDC_HEIGHT,EM_LIMITTEXT,15,0);
+	SendMessage(p_caption, EM_LIMITTEXT, 1023, 0);
+	SendDlgItemMessage(p_dialog, IDC_XPOS,EM_LIMITTEXT, 15, 0);
+	SendDlgItemMessage(p_dialog, IDC_YPOS,EM_LIMITTEXT, 15, 0);
+	SendDlgItemMessage(p_dialog, IDC_WIDTH,EM_LIMITTEXT, 15, 0);
+	SendDlgItemMessage(p_dialog, IDC_HEIGHT,EM_LIMITTEXT, 15, 0);
 
 	mp.combobox = p_monitor;
-	item = SendMessage(p_monitor,CB_ADDSTRING,0,(LPARAM)TEXT("すべてのモニタ"));
-	SendMessage(p_monitor,CB_SETITEMDATA,item,0);
+	item = SendMessage(p_monitor, CB_ADDSTRING, 0, (LPARAM)TEXT("すべてのモニタ"));
+	SendMessage(p_monitor, CB_SETITEMDATA, item, 0);
 
 	if(OSFeatureTest(OSF_MON_98))
 	{
-		mp.current_monitor = MonitorFromWindow(p_target,MONITOR_DEFAULTTONEAREST);
-		EnumDisplayMonitors(NULL,NULL,enum_monitors,(LPARAM)&mp);
+		mp.current_monitor = MonitorFromWindow(p_target, MONITOR_DEFAULTTONEAREST);
+		EnumDisplayMonitors(NULL, NULL, enum_monitors, (LPARAM)&mp);
 	}
 	else
 	{
-		SendMessage(p_monitor,CB_SETCURSEL,0,0);
-		EnableWindow(GetDlgItem(p_dialog,IDC_DISPLAY_LABEL),FALSE);
-		EnableWindow(p_monitor,FALSE);
+		SendMessage(p_monitor, CB_SETCURSEL, 0, 0);
+		EnableWindow(GetDlgItem(p_dialog, IDC_DISPLAY_LABEL), FALSE);
+		EnableWindow(p_monitor, FALSE);
 	}
 
 	/* 仮想画面の幅と左端の座標 */
@@ -163,8 +163,8 @@ void SizeDialog::do_initdialog(LPARAM l)
 	{
 		ival = GetSystemMetrics(SM_CXSCREEN);
 	}
-	SendMessage(p_xpos,UDM_SETRANGE32,-32768,32767);
-	SendMessage(p_width,UDM_SETRANGE32,0,ival);
+	SendMessage(p_xpos, UDM_SETRANGE32, -32768, 32767);
+	SendMessage(p_width, UDM_SETRANGE32, 0, ival);
 
 	/* 仮想画面の高さと上端の座標 */
 	if(OSFeatureTest(OSF_MON_98))
@@ -175,17 +175,17 @@ void SizeDialog::do_initdialog(LPARAM l)
 	{
 		ival = GetSystemMetrics(SM_CYSCREEN);
 	}
-	SendMessage(p_ypos,UDM_SETRANGE32,-32768,32767);
-	SendMessage(p_height,UDM_SETRANGE32,0,ival);
+	SendMessage(p_ypos, UDM_SETRANGE32, -32768, 32767);
+	SendMessage(p_height, UDM_SETRANGE32, 0, ival);
 
 	client_metrics = ((0x8000 & GetAsyncKeyState(VK_SHIFT)) == 0x8000);
 	if(client_metrics)
 	{
-		GetClientRectAsScreenPos(p_target,&r);
+		GetClientRectAsScreenPos(p_target, &r);
 	}
 	else
 	{
-		GetWindowRect(p_target,&r);
+		GetWindowRect(p_target, &r);
 	}
 
 	p_pos.x = r.left;
@@ -193,37 +193,37 @@ void SizeDialog::do_initdialog(LPARAM l)
 	p_size.cx = r.right - r.left;
 	p_size.cy = r.bottom - r.top;
 
-	SendMessage(p_xpos,UDM_SETPOS32,0,p_pos.x);
-	SendMessage(p_ypos,UDM_SETPOS32,0,p_pos.y);
-	SendMessage(p_width,UDM_SETPOS32,0,p_size.cx);
-	SendMessage(p_height,UDM_SETPOS32,0,p_size.cy);
+	SendMessage(p_xpos, UDM_SETPOS32, 0, p_pos.x);
+	SendMessage(p_ypos, UDM_SETPOS32, 0, p_pos.y);
+	SendMessage(p_width, UDM_SETPOS32, 0, p_size.cx);
+	SendMessage(p_height, UDM_SETPOS32, 0, p_size.cy);
 
 	if(client_metrics)
 	{
-		SendDlgItemMessage(p_dialog,IDC_POS_CLIENT,BM_SETCHECK,BST_CHECKED,0);
-		SendDlgItemMessage(p_dialog,IDC_SIZE_CLIENT,BM_SETCHECK,BST_CHECKED,0);
+		SendDlgItemMessage(p_dialog, IDC_POS_CLIENT, BM_SETCHECK, BST_CHECKED, 0);
+		SendDlgItemMessage(p_dialog, IDC_SIZE_CLIENT, BM_SETCHECK, BST_CHECKED, 0);
 	}
 
-	p_caption_text = (TCHAR*)calloc(1024,sizeof(TCHAR));
+	p_caption_text = (TCHAR *)calloc(1024, sizeof(TCHAR));
 	_ASSERT(p_caption_text);
 	if(p_caption_text)
 	{
-		GetWindowText(p_target,p_caption_text,1024);
-		SetWindowText(p_caption,p_caption_text);
+		GetWindowText(p_target, p_caption_text, 1024);
+		SetWindowText(p_caption, p_caption_text);
 	}
 }
 
-void SizeDialog::do_notify(NMHDR *notify_header)
+void SizeDialog::do_notify(NMHDR * notify_header)
 {
 	POINT pos;
 	SIZE size;
 	ULONG flags;
-	TCHAR *new_caption;
+	TCHAR * new_caption;
 	int n;
 
 #if defined(ZEROFILL_LOCAL_VARS)
-	memset(&pos,0,sizeof(POINT));
-	memset(&size,0,sizeof(SIZE));
+	memset(&pos, 0, sizeof(POINT));
+	memset(&size, 0, sizeof(SIZE));
 	//flags = 0;
 	new_caption = NULL;
 	n = 0;
@@ -234,17 +234,17 @@ void SizeDialog::do_notify(NMHDR *notify_header)
 	{
 		if(p_do_apply)
 		{
-			pos.x = (int)SendMessage(p_xpos,UDM_GETPOS32,0,0);
-			pos.y = (int)SendMessage(p_ypos,UDM_GETPOS32,0,0);
-			size.cx = (int)SendMessage(p_width,UDM_GETPOS32,0,0);
-			size.cy = (int)SendMessage(p_height,UDM_GETPOS32,0,0);
+			pos.x = (int)SendMessage(p_xpos, UDM_GETPOS32, 0, 0);
+			pos.y = (int)SendMessage(p_ypos, UDM_GETPOS32, 0, 0);
+			size.cx = (int)SendMessage(p_width, UDM_GETPOS32, 0, 0);
+			size.cy = (int)SendMessage(p_height, UDM_GETPOS32, 0, 0);
 
-			if(IsDlgButtonChecked(p_dialog,IDC_POS_CLIENT) == BST_CHECKED)
+			if(IsDlgButtonChecked(p_dialog, IDC_POS_CLIENT) == BST_CHECKED)
 			{
 				flags |= SDAF_CLIENT_POS;
 			}
 
-			if(IsDlgButtonChecked(p_dialog,IDC_SIZE_CLIENT) == BST_CHECKED)
+			if(IsDlgButtonChecked(p_dialog, IDC_SIZE_CLIENT) == BST_CHECKED)
 			{
 				flags |= SDAF_CLIENT_SIZE;
 			}
@@ -252,12 +252,12 @@ void SizeDialog::do_notify(NMHDR *notify_header)
 			n = GetWindowTextLength(p_caption);
 			if(n > 0)
 			{
-				new_caption = (TCHAR*)calloc(++n,sizeof(TCHAR));;
+				new_caption = (TCHAR *)calloc(++n, sizeof(TCHAR));;
 				_ASSERT(new_caption);
 				if(new_caption)
 				{
-					GetWindowText(p_caption,new_caption,n);
-					if(_tcscmp(new_caption,p_caption_text))
+					GetWindowText(p_caption, new_caption, n);
+					if(_tcscmp(new_caption, p_caption_text))
 					{
 						flags |= SDAF_SETCAPTION;
 					}
@@ -266,7 +266,7 @@ void SizeDialog::do_notify(NMHDR *notify_header)
 
 			if(p_callback)
 			{
-				(*p_callback)(p_callback_param,flags,&pos,&size,new_caption);
+				(*p_callback)(p_callback_param, flags, &pos, &size, new_caption);
 			}
 
 			p_pos = pos;
@@ -274,7 +274,7 @@ void SizeDialog::do_notify(NMHDR *notify_header)
 
 			if(new_caption)
 			{
-				_tcsncpy_s(p_caption_text,1024,new_caption,_TRUNCATE);
+				_tcsncpy_s(p_caption_text, 1024, new_caption, _TRUNCATE);
 				free(new_caption);
 			}
 
@@ -283,13 +283,13 @@ void SizeDialog::do_notify(NMHDR *notify_header)
 	}
 }
 
-void SizeDialog::do_command(WORD id,WORD code,HWND window_from)
+void SizeDialog::do_command(WORD id, WORD code, HWND window_from)
 {
 	LRESULT item;
 	HMONITOR mon;
 	RECT r;
 	ULONG flags;
-	TCHAR *buffer;
+	TCHAR * buffer;
 	TCHAR minibuffer[16];
 	int val;
 	int val_o;
@@ -297,10 +297,10 @@ void SizeDialog::do_command(WORD id,WORD code,HWND window_from)
 #if defined(ZEROFILL_LOCAL_VARS)
 	item = 0;
 	HMONITOR = NULL;
-	memset(&r,0,sizeof(RECT));
+	memset(&r, 0, sizeof(RECT));
 	//flags = 0;
 	buffer = NULL;
-	memset(minibuffer,0,sizeof(TCHAR) * 16);
+	memset(minibuffer, 0, sizeof(TCHAR) * 16);
 	val = 0;
 	val_o = 0;
 #endif
@@ -312,11 +312,11 @@ void SizeDialog::do_command(WORD id,WORD code,HWND window_from)
 		switch(id)
 		{
 		case IDC_CAPTION:
-			buffer = (TCHAR*)calloc(1024,sizeof(TCHAR));
+			buffer = (TCHAR *)calloc(1024, sizeof(TCHAR));
 			if(buffer)
 			{
-				GetWindowText(window_from,buffer,1024);
-				p_do_apply = _tcscmp(buffer,p_caption_text) != 0;
+				GetWindowText(window_from, buffer, 1024);
+				p_do_apply = _tcscmp(buffer, p_caption_text) != 0;
 				free(buffer);
 			}
 			break;
@@ -333,18 +333,18 @@ void SizeDialog::do_command(WORD id,WORD code,HWND window_from)
 			val_o = p_size.cy;
 			goto getval;
 getval:
-			GetWindowText(window_from,minibuffer,16);
+			GetWindowText(window_from, minibuffer, 16);
 			val = _ttoi(minibuffer);
 			p_do_apply = (val != val_o);
 			break;
 		}
 		if(p_do_apply)
 		{
-			SendMessage(p_parent,PSM_CHANGED,(WPARAM)p_dialog,0);
+			SendMessage(p_parent, PSM_CHANGED, (WPARAM)p_dialog, 0);
 		}
 		else
 		{
-			SendMessage(p_parent,PSM_UNCHANGED,(WPARAM)p_dialog,0);
+			SendMessage(p_parent, PSM_UNCHANGED, (WPARAM)p_dialog, 0);
 		}
 
 		return;
@@ -387,23 +387,23 @@ getval:
 		break;
 	}
 
-	r.left = (LONG)SendMessage(p_xpos,UDM_GETPOS32,0,0);
-	r.top = (LONG)SendMessage(p_ypos,UDM_GETPOS32,0,0);
-	r.right = (LONG)SendMessage(p_width,UDM_GETPOS32,0,0);
-	r.bottom = (LONG)SendMessage(p_height,UDM_GETPOS32,0,0);
+	r.left = (LONG)SendMessage(p_xpos, UDM_GETPOS32, 0, 0);
+	r.top = (LONG)SendMessage(p_ypos, UDM_GETPOS32, 0, 0);
+	r.right = (LONG)SendMessage(p_width, UDM_GETPOS32, 0, 0);
+	r.bottom = (LONG)SendMessage(p_height, UDM_GETPOS32, 0, 0);
 
-	item = SendMessage(p_monitor,CB_GETCURSEL,0,0);
-	mon = (HMONITOR)SendMessage(p_monitor,CB_GETITEMDATA,item,0);
+	item = SendMessage(p_monitor, CB_GETCURSEL, 0, 0);
+	mon = (HMONITOR)SendMessage(p_monitor, CB_GETITEMDATA, item, 0);
 
-	calc_window_position(flags,mon,&r);
+	calc_window_position(flags, mon, &r);
 
-	SendMessage(p_xpos,UDM_SETPOS32,0,r.left);
-	SendMessage(p_ypos,UDM_SETPOS32,0,r.top);
-	SendMessage(p_width,UDM_SETPOS32,0,r.right);
-	SendMessage(p_height,UDM_SETPOS32,0,r.bottom);
+	SendMessage(p_xpos, UDM_SETPOS32, 0, r.left);
+	SendMessage(p_ypos, UDM_SETPOS32, 0, r.top);
+	SendMessage(p_width, UDM_SETPOS32, 0, r.right);
+	SendMessage(p_height, UDM_SETPOS32, 0, r.bottom);
 }
 
-void SizeDialog::calc_window_position(ULONG flags,HMONITOR monitor,RECT *r)
+void SizeDialog::calc_window_position(ULONG flags, HMONITOR monitor, RECT * r)
 {
 	MONITORINFO mi;
 
@@ -416,7 +416,7 @@ void SizeDialog::calc_window_position(ULONG flags,HMONITOR monitor,RECT *r)
 		if(monitor)
 		{
 			mi.cbSize = sizeof(MONITORINFO);
-			GetMonitorInfo(monitor,&mi);
+			GetMonitorInfo(monitor, &mi);
 		}
 		else
 		{
@@ -472,25 +472,25 @@ void SizeDialog::calc_window_position(ULONG flags,HMONITOR monitor,RECT *r)
 	}
 }
 
-BOOL CALLBACK SizeDialog::enum_monitors(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData)
+BOOL CALLBACK SizeDialog::enum_monitors(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
 	LRESULT item;
 	MONITORINFOEX mi;
 
 #if defined(ZEROFILL_LOCAL_VARS)
 	item = 0;
-	memset(&mi,0,sizeof(MONITORINFOEX));
+	memset(&mi, 0, sizeof(MONITORINFOEX));
 #endif
 
 	mi.cbSize = sizeof(MONITORINFOEX);
-	GetMonitorInfo(hMonitor,(LPMONITORINFO)&mi);
+	GetMonitorInfo(hMonitor, (LPMONITORINFO)&mi);
 
-	item = SendMessage(((const ENUMMONITORPARAM*)dwData)->combobox,CB_ADDSTRING,0,(LPARAM)mi.szDevice);
-	SendMessage(((const ENUMMONITORPARAM*)dwData)->combobox,CB_SETITEMDATA,item,(LPARAM)hMonitor);
+	item = SendMessage(((const ENUMMONITORPARAM *)dwData)->combobox, CB_ADDSTRING, 0, (LPARAM)mi.szDevice);
+	SendMessage(((const ENUMMONITORPARAM *)dwData)->combobox, CB_SETITEMDATA, item, (LPARAM)hMonitor);
 
-	if(hMonitor == ((const ENUMMONITORPARAM*)dwData)->current_monitor)
+	if(hMonitor == ((const ENUMMONITORPARAM *)dwData)->current_monitor)
 	{
-		SendMessage(((const ENUMMONITORPARAM*)dwData)->combobox,CB_SETCURSEL,item,0);
+		SendMessage(((const ENUMMONITORPARAM *)dwData)->combobox, CB_SETCURSEL, item, 0);
 	}
 
 	return TRUE;

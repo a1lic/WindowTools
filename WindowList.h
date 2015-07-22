@@ -1,8 +1,7 @@
-﻿#ifndef WINDOWLIST_H
-#define WINDOWLIST_H
+﻿#pragma once
 
-#include <windows.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 #include "Window.h"
 
 #if !defined(_UXTHEME_H)
@@ -11,13 +10,15 @@ typedef HRESULT (WINAPI SETWINDOWTHEME)(HWND, LPCWSTR, LPCWSTR);
 
 enum WINDOWLIST_SORT_MODE : unsigned char
 {
-	WLSM_NOSORT,WLSM_ASC,WLSM_DSC,WLSM_ENDNUM
-};
+	WLSM_NOSORT,
+	WLSM_ASC,
+	WLSM_DSC,
+	WLSM_ENDNUM};
 //typedef enum WINDOWLIST_SORT_MODE WINDOWLIST_SORT_MODE;
 
 struct WINDOWLIST_ENUM_CHILDREN
 {
-	class WindowList *_this;
+	class WindowList * _this;
 	unsigned char depth;
 	int insert_index;
 };
@@ -76,9 +77,9 @@ public:
 	void SinkToBottom();
 	void ShowProperty();
 	HIMAGELIST GetImageList(bool);
-	LRESULT Notify(const NMHDR*);
+	LRESULT Notify(const NMHDR *);
 	void Sort(int);
-	void Sort(int,WINDOWLIST_SORT_MODE);
+	void Sort(int, WINDOWLIST_SORT_MODE);
 	void EndDragMode();
 	unsigned int GetItemCount();
 	void HandleContextMenu(HMENU);
@@ -86,15 +87,15 @@ public:
 private:
 	void delete_all_items();
 	void delete_invalid_items();
-	int find_next_selected_item(int,Window**);
-	int find_window_item(HWND,Window**);
-	int add(Window*);
+	int find_next_selected_item(int, Window **);
+	int find_window_item(HWND, Window **);
+	int add(Window *);
 	LPARAM item_param(int);
-	bool check_style(HWND,DWORD*,DWORD*);
-	void get_info_tip(NMLVGETINFOTIP*);
-	static BOOL CALLBACK update_child_list(HWND,LPARAM);
-	static BOOL CALLBACK update_window_list(HWND,LPARAM);
-	static int CALLBACK sort_items(LPARAM,LPARAM,LPARAM);
+	bool check_style(HWND, DWORD *, DWORD *);
+	void get_info_tip(NMLVGETINFOTIP *);
+	static BOOL CALLBACK update_child_list(HWND, LPARAM);
+	static BOOL CALLBACK update_window_list(HWND, LPARAM);
+	static int CALLBACK sort_items(LPARAM, LPARAM, LPARAM);
 
 	static const LVCOLUMN columns[7];
 #if _WIN32_WINNT >= 0x501
@@ -108,4 +109,3 @@ private:
 #endif
 #endif
 };
-#endif

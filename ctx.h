@@ -1,7 +1,6 @@
-﻿#ifndef CTX_H
-#define CTX_H
+﻿#pragma once
 
-#include <windows.h>
+#include <Windows.h>
 
 #if !defined(EXTERN_C)
 #if defined(__cplusplus)
@@ -12,5 +11,3 @@
 #endif
 
 EXTERN_C HANDLE CreateContextFromManifest(HINSTANCE);
-
-#endif

@@ -1,6 +1,4 @@
-﻿#ifndef DYNTDLL_H
-#define DYNTDLL_H
-#pragma once
+﻿#pragma once
 
 #if !defined(EXTERN_C)
 #if defined(__cplusplus)
@@ -19,11 +17,9 @@ typedef LONG NTSTATUS;
 #ifndef WIN32_NO_STATUS
 #define WIN32_NO_STATUS
 #endif
-#include <windows.h>
+#include <Windows.h>
 
 EXTERN_C void InitializeNtDllRuntimeLinker();
 EXTERN_C void UninitializeNtDllRuntimeLinker();
 EXTERN_C NTSTATUS NTAPI NtSetTimerResolution(ULONG, BOOLEAN, PULONG);
 EXTERN_C NTSTATUS NTAPI NtQueryTimerResolution(PULONG, PULONG, PULONG);
-
-#endif

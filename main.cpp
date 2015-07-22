@@ -11,16 +11,10 @@
 #include "WindowStatusBar.h"
 #include "resource.h"
 
-#if 0
-/* dymcimp.c */
-extern "C" void InitializeDelayedLoadEntryPoints();
-extern "C" void FreeDelayedLoadEntryPoints();
-#endif
-
 struct THREAD_PARAM
 {
 	HINSTANCE instance;
-	int       show;
+	int show;
 };
 typedef struct THREAD_PARAM THREAD_PARAM;
 
@@ -293,11 +287,6 @@ void MainWindow::on_timer(UINT_PTR id)
 		break;
 
 	case 37564:
-#if 0
-		id = (int)GetGuiResources(GetCurrentProcess(),GR_GDIOBJECTS);
-		_sntprintf_s(caption,64,_TRUNCATE,_T("Window Tools - %lu gdi objs"),(DWORD)id);
-		SetWindowText(window,caption);
-#endif
 		if(!::IsIconic(this->p_window))
 		{
 			this->p_list->Update();
@@ -386,7 +375,7 @@ void MainWindow::on_enter_size_move()
 LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	MainWindow *_this;
-	LRESULT     r;
+	LRESULT r;
 
 	_this = reinterpret_cast<MainWindow *>(::GetWindowLongPtr(hwnd, 0));
 	r = 0;
@@ -489,11 +478,6 @@ MainWindow::MainWindow(HINSTANCE instance)
 	this->p_instance = instance;
 	this->p_show_window = 0;
 
-	//p_pos.x       = 0;
-	//p_pos.y       = 0;
-	//p_size.cx     = 0;
-	//p_size.cy     = 0;
-
 	this->p_list = nullptr;
 	this->p_status = nullptr;
 	this->p_menu = nullptr;
@@ -563,10 +547,10 @@ ATOM MainWindow::RegisterClass2(const WNDCLASSEX *wc)
 {
 	WNDCLASSEX window_class;
 
-	window_class           = window_class_t;
+	window_class = window_class_t;
 	window_class.hInstance = wc->hInstance;
-	window_class.hIcon     = wc->hIcon;
-	window_class.hIconSm   = wc->hIconSm;
+	window_class.hIcon = wc->hIcon;
+	window_class.hIconSm = wc->hIconSm;
 
 	return RegisterClassEx(&window_class);
 }
@@ -600,7 +584,7 @@ unsigned __int64 get_system_time()
 LRESULT CALLBACK kbd_watchdog(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	static unsigned __int64 last_exec;
-	unsigned __int64        current_time;
+	unsigned __int64 current_time;
 
 	if(nCode == HC_ACTION)
 	{
@@ -630,12 +614,12 @@ LRESULT CALLBACK kbd_watchdog(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-unsigned __stdcall main_window_thread(void *arg)
+unsigned __stdcall main_window_thread(void * arg)
 {
-	MSG         msg;
-	MainWindow *rarg;
-	HWND        window;
-	HHOOK       hook;
+	MSG msg;
+	MainWindow * rarg;
+	HWND window;
+	HHOOK hook;
 
 	rarg = new MainWindow(reinterpret_cast<const THREAD_PARAM *>(arg)->instance);
 
@@ -662,37 +646,18 @@ unsigned __stdcall main_window_thread(void *arg)
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX   wc;
+	WNDCLASSEX wc;
 	THREAD_PARAM p;
-	ATOM         catom;
+	ATOM catom;
 #if _WIN32_WINNT >= 0x600  && defined(ENABLE_THUMBNAIL)
-	ATOM         thumb_atom;
+	ATOM thumb_atom;
 #endif
-	//STARTUPINFO  StartupInfo;
-	//PROCESS_INFORMATION ProcessInfo;
-	//BOOL         Result;
-	//TCHAR        *Cmd;
-	int          quit_code;
-	bool         loaded_oem_normal_icon;
-	bool         loaded_oem_small_icon;
+	int quit_code;
+	bool loaded_oem_normal_icon;
+	bool loaded_oem_small_icon;
 
-	/*InitializeDelayedLoadEntryPoints();*/
 	::LocalHeapInitialize();
 	::InitCommonControls();
-
-#if 0
-	memset(&StartupInfo, 0, sizeof(STARTUPINFO));
-	StartupInfo.cb = sizeof(STARTUPINFO);
-	Cmd = new TCHAR[MAX_PATH];
-	_tcscpy_s(Cmd, MAX_PATH, _T("winver.exe"));
-	Result = ::CreateProcess(nullptr, Cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &StartupInfo, &ProcessInfo);
-	if(Result)
-	{
-		::CloseHandle(ProcessInfo.hProcess);
-		::CloseHandle(ProcessInfo.hThread);
-	}
-	delete [] Cmd;
-#endif
 
 	ntdll = ::LoadLibrary(TEXT("NTDLL.DLL"));
 	if(ntdll)
@@ -704,7 +669,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	// Windows95、WindowsNT4以降では小さいアイコンも読み込む必要がある
 	wc.hInstance = hInstance;
 	// LoadIconのアイコンサイズはSM_CXICON、SM_CYICON固定なので、LoadImage+GetSystemMetricsでサイズを指定して読み込む
-	wc.hIcon     = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXICON),   GetSystemMetrics(SM_CYICON),   0));
+	wc.hIcon = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXICON),   GetSystemMetrics(SM_CYICON),   0));
 	if(wc.hIcon == NULL)
 	{
 		wc.hIcon = reinterpret_cast<HICON>(::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_SHARED));
@@ -714,7 +679,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	{
 		loaded_oem_normal_icon = false;
 	}
-	wc.hIconSm   = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
+	wc.hIconSm = reinterpret_cast<HICON>(::LoadImage(hInstance, MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
 	if(wc.hIconSm == NULL)
 	{
 		wc.hIconSm = reinterpret_cast<HICON>(::LoadImage(NULL, MAKEINTRESOURCE(OIC_SAMPLE), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED));
@@ -732,7 +697,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 #endif
 
 	p.instance = hInstance;
-	p.show     = nCmdShow;
+	p.show = nCmdShow;
 
 	quit_code = static_cast<int>(main_window_thread(&p));
 
@@ -759,7 +724,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 
 	::LocalHeapDestroy();
-	/*FreeDelayedLoadEntryPoints();*/
 
 	return quit_code;
 }

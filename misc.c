@@ -2,10 +2,9 @@
 #include <malloc.h>
 #include <math.h>
 #include <tchar.h>
-#include <windows.h>
-//#include <psapi.h>
-#include <tlhelp32.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <TlHelp32.h>
+#include <CommCtrl.h>
 #include "misc.h"
 
 HINSTANCE ntdll;
@@ -85,37 +84,37 @@ int ListViewGetSelectingIndex(HWND lvd)
 	return i;
 }
 
-LPARAM ListViewGetLPARAM(HWND listview,int item)
+LPARAM ListViewGetLPARAM(HWND listview, int item)
 {
 	LVITEM i;
 
-	memset(&i,0,sizeof(LVITEM));
+	memset(&i, 0, sizeof(LVITEM));
 	i.mask = LVIF_PARAM;
 	i.iItem = item;
 
-	if(!ListView_GetItem(listview,&i))
+	if(!ListView_GetItem(listview, &i))
 	{
 		return 0;
 	}
 	return i.lParam;
 }
 
-void ListViewUpdateItemString(HWND listview,int item,int sub_item,PCTSTR text)
+void ListViewUpdateItemString(HWND listview, int item, int sub_item, PCTSTR text)
 {
-	TCHAR *tmp_text;
+	TCHAR * tmp_text;
 
-	tmp_text = (TCHAR*)calloc(1024,sizeof(TCHAR));
+	tmp_text = (TCHAR *)calloc(1024, sizeof(TCHAR));
 	if(tmp_text)
 	{
-		ListView_GetItemText(listview,item,sub_item,tmp_text,1024);
-		if(_tcscmp(tmp_text,text))
+		ListView_GetItemText(listview, item, sub_item, tmp_text, 1024);
+		if(_tcscmp(tmp_text, text))
 		{
-			ListView_SetItemText(listview,item,sub_item,(PTSTR)text);
+			ListView_SetItemText(listview, item, sub_item, (PTSTR)text);
 		}
 	}
 	else
 	{
-		ListView_SetItemText(listview,item,sub_item,(PTSTR)text);
+		ListView_SetItemText(listview, item, sub_item, (PTSTR)text);
 	}
 }
 
@@ -166,7 +165,7 @@ BOOLEAN OSFeatureTest(DWORD flags)
 	return ((feature_flags & flags) == flags);
 }
 
-void CenteringWindow(HWND window,const POINT *pos)
+void CenteringWindow(HWND window, const POINT * pos)
 {
 	/* ウィンドウの中心点がposで指定した位置に来るように移動する */
 	HMONITOR monitor;
@@ -194,14 +193,14 @@ void CenteringWindow(HWND window,const POINT *pos)
 	else
 	{
 		/* モニタのハンドルが取れなかった場合はプライマリモニタと仮定 */
-		SystemParametersInfo(SPI_GETWORKAREA,0,&mon_info.rcWork,0);
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &mon_info.rcWork, 0);
 	}
 
-	InflateRect(&mon_info.rcWork,-8,-8);
+	InflateRect(&mon_info.rcWork, -8, -8);
 
 	/* ダイアログの大きさ */
-	GetWindowRect(window,&dlg_rect);
-	OffsetRect(&dlg_rect,-dlg_rect.left,-dlg_rect.top);
+	GetWindowRect(window, &dlg_rect);
+	OffsetRect(&dlg_rect, -dlg_rect.left, -dlg_rect.top);
 
 	/* 大きさの半分を座標から減ずる */
 	p.x -= dlg_rect.right / 2;
@@ -226,7 +225,7 @@ void CenteringWindow(HWND window,const POINT *pos)
 		p.y = mon_info.rcWork.top;
 	}
 
-	SetWindowPos(window,NULL,p.x,p.y,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+	SetWindowPos(window, NULL, p.x, p.y, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void CenteringWindowToCursor(HWND window)
@@ -234,19 +233,19 @@ void CenteringWindowToCursor(HWND window)
 	POINT p;
 
 	GetCursorPos(&p);
-	CenteringWindow(window,&p);
+	CenteringWindow(window, &p);
 }
 
-void CenteringWindowToParent(HWND window,HWND parent)
+void CenteringWindowToParent(HWND window, HWND parent)
 {
 	RECT parent_rect;
 	POINT p;
 
-	if(GetWindowRect(parent,&parent_rect))
+	if(GetWindowRect(parent, &parent_rect))
 	{
 		p.x = parent_rect.left + (parent_rect.right - parent_rect.left) / 2;
 		p.y = parent_rect.top + (parent_rect.bottom - parent_rect.top) / 2;
-		CenteringWindow(window,&p);
+		CenteringWindow(window, &p);
 	}
 }
 
@@ -254,7 +253,7 @@ BOOLEAN GetSysParametersBoolean(int index)
 {
 	BOOL value;
 
-	if(!SystemParametersInfo(index,0,&value,0))
+	if(!SystemParametersInfo(index, 0, &value, 0))
 	{
 		if(IsDebuggerPresent())
 		{
@@ -265,30 +264,21 @@ BOOLEAN GetSysParametersBoolean(int index)
 	return (value != FALSE);
 }
 
-void CheckMenuItem2(HMENU menu,int id,BOOLEAN checked)
+void CheckMenuItem2(HMENU menu, int id, BOOLEAN checked)
 {
-	CheckMenuItem(menu,id,MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
+	CheckMenuItem(menu, id, MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
 }
 
-/*
-void CheckMenuItem3(HMENU menu,int id,BOOLEAN checked)
+ULONG QueryTimerResolutions(ULONG * pmin, ULONG * pmax, ULONG * pcur)
 {
-	
-	m.hbmpChecked = MFT_RADIOCHECK;
-	CheckMenuItem(menu,id,MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
-}
-*/
-
-ULONG QueryTimerResolutions(ULONG *pmin,ULONG *pmax,ULONG *pcur)
-{
-	ULONG min,max,cur,r;
+	ULONG min, max, cur, r;
 
 	if(!u_NtQueryTimerResolution.FuncPointer)
 	{
 		return 0xC0000002UL; /* STATUS_NOT_IMPLEMENTED */
 	}
 
-	r = u_NtQueryTimerResolution.Invoke(&min,&max,&cur);
+	r = u_NtQueryTimerResolution.Invoke(&min, &max, &cur);
 
 	if(!r)
 	{
@@ -309,31 +299,31 @@ ULONG QueryTimerResolutions(ULONG *pmin,ULONG *pmax,ULONG *pcur)
 	return r;
 }
 
-INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
+INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	INT_PTR r;
 	OSVERSIONINFOEX version;
-	TCHAR *str;
-	TCHAR *newstr;
+	TCHAR * str;
+	TCHAR * newstr;
 
 	r = FALSE;
 	switch(uMsg)
 	{
 	case WM_CLOSE:
-		EndDialog(hwndDlg,0);
+		EndDialog(hwndDlg, 0);
 		r = TRUE;
 		break;
 
 	case WM_COMMAND:
 		if(LOWORD(wParam) == IDOK)
 		{
-			EndDialog(hwndDlg,0);
+			EndDialog(hwndDlg, 0);
 			r = TRUE;
 		}
 		break;
 
 	case WM_INITDIALOG:
-		CenteringWindowToParent(hwndDlg,(HWND)GetWindowLongPtr(hwndDlg,GWLP_HWNDPARENT));
+		CenteringWindowToParent(hwndDlg, (HWND)GetWindowLongPtr(hwndDlg, GWLP_HWNDPARENT));
 		memset(&version, 0, sizeof(OSVERSIONINFOEX));
 		version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 #pragma warning(push)
@@ -353,7 +343,7 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lPa
 	return r;
 }
 
-BOOLEAN GetProcessNameFromId(DWORD id,PTSTR name,size_t name_s)
+BOOLEAN GetProcessNameFromId(DWORD id, PTSTR name, size_t name_s)
 {
 	BOOLEAN r;
 	HANDLE s;
@@ -402,15 +392,15 @@ BOOLEAN GetProcessNameFromId(DWORD id,PTSTR name,size_t name_s)
 
 LegacyMethod:
 	r = FALSE;
-	s = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
+	s = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if(s)
 	{
 		info.dwSize = sizeof(PROCESSENTRY32);
-		for(rw = Process32First(s,&info); rw; rw = Process32Next(s,&info))
+		for(rw = Process32First(s, &info); rw; rw = Process32Next(s, &info))
 		{
 			if(info.th32ProcessID == id)
 			{
-				_tcsncpy_s(name,name_s,info.szExeFile,_TRUNCATE);
+				_tcsncpy_s(name, name_s, info.szExeFile, _TRUNCATE);
 				r = TRUE;
 				break;
 			}
@@ -420,18 +410,18 @@ LegacyMethod:
 	return r;
 }
 
-void CleanupListView(HWND window,HANDLE heap)
+void CleanupListView(HWND window, HANDLE heap)
 {
 }
 
-void GetClientRectAsScreenPos(HWND window,RECT *rc)
+void GetClientRectAsScreenPos(HWND window, RECT * rc)
 {
 	POINT pos;
 
 	pos.x = 0;
 	pos.y = 0;
-	ClientToScreen(window,&pos);
-	GetClientRect(window,rc);
+	ClientToScreen(window, &pos);
+	GetClientRect(window, rc);
 
 	rc->left = pos.x;
 	rc->top = pos.y;
@@ -443,8 +433,8 @@ void LocalHeapInitialize()
 {
 	static const ULONG two = 2UL;
 
-	main_heap = HeapCreate(0,0,0);
-	HeapSetInformation(main_heap,HeapCompatibilityInformation,(PVOID)&two,sizeof(ULONG));
+	main_heap = HeapCreate(0, 0, 0);
+	HeapSetInformation(main_heap, HeapCompatibilityInformation, (PVOID)&two, sizeof(ULONG));
 }
 
 void LocalHeapDestroy()
@@ -457,17 +447,17 @@ void LocalHeapDestroy()
 
 void* LocalHeapAlloc(DWORD size)
 {
-	return HeapAlloc(main_heap,HEAP_ZERO_MEMORY,size);
+	return HeapAlloc(main_heap, HEAP_ZERO_MEMORY, size);
 }
 
-void* LocalHeapReAlloc(DWORD size,void *pointer)
+void* LocalHeapReAlloc(DWORD size, void * pointer)
 {
-	return HeapReAlloc(main_heap,HEAP_ZERO_MEMORY,pointer,size);
+	return HeapReAlloc(main_heap, HEAP_ZERO_MEMORY, pointer, size);
 }
 
-void LocalHeapFree(void *pointer)
+void LocalHeapFree(void * pointer)
 {
-	HeapFree(main_heap,0,pointer);
+	HeapFree(main_heap, 0, pointer);
 }
 
 void LocalHeapDump()
@@ -487,10 +477,10 @@ void DumpHeapStatus(HANDLE heap)
 
 	if(HeapLock(heap))
 	{
-		Debug(TEXT("Dumping heap(%p) informations..."),heap);
+		Debug(TEXT("Dumping heap(%p) informations..."), heap);
 		i = 0;
-		memset(&heap_entry,0,sizeof(PROCESS_HEAP_ENTRY));
-		while(HeapWalk(heap,&heap_entry))
+		memset(&heap_entry, 0, sizeof(PROCESS_HEAP_ENTRY));
+		while(HeapWalk(heap, &heap_entry))
 		{
 			if(heap_entry.wFlags & PROCESS_HEAP_REGION)
 			{
@@ -540,13 +530,13 @@ void DumpHeapStatus(HANDLE heap)
 
 void DumpAllHeapsStatus()
 {
-	HANDLE *heap_list;
-	DWORD i,count;
+	HANDLE * heap_list;
+	DWORD i, count;
 
-	heap_list = VirtualAlloc(NULL,4096 * sizeof(HANDLE),MEM_COMMIT,PAGE_READWRITE);
+	heap_list = VirtualAlloc(NULL, 4096 * sizeof(HANDLE), MEM_COMMIT, PAGE_READWRITE);
 	if(heap_list)
 	{
-		count = GetProcessHeaps(4096,heap_list);
+		count = GetProcessHeaps(4096, heap_list);
 		if(count > 0UL)
 		{
 			for(i = 0UL; i < count; i++)
@@ -554,11 +544,11 @@ void DumpAllHeapsStatus()
 				DumpHeapStatus(heap_list[i]);
 			}
 		}
-		VirtualFree(heap_list,0,MEM_RELEASE);
+		VirtualFree(heap_list, 0, MEM_RELEASE);
 	}
 }
 
-void SnapWindow(HWND hwnd, RECT *prc, int Margin, HWND hwndExclude)
+void SnapWindow(HWND hwnd, RECT * prc, int Margin, HWND hwndExclude)
 {
 	HMONITOR hMonitor;
 	RECT rc;
@@ -611,7 +601,7 @@ void SnapWindow(HWND hwnd, RECT *prc, int Margin, HWND hwndExclude)
 
 BOOL CALLBACK SnapWindowProc(HWND hwnd, LPARAM lParam)
 {
-	SnapWindowInfo *pInfo = (SnapWindowInfo*)lParam;
+	SnapWindowInfo *pInfo = (SnapWindowInfo *)lParam;
 	RECT rc;
 	RECT rcEdge;
 
@@ -669,7 +659,7 @@ BOOL CALLBACK SnapWindowProc(HWND hwnd, LPARAM lParam)
 	return TRUE;
 }
 
-BOOLEAN IsWindowEdgeVisible(HWND hwnd, HWND hwndTop, const RECT *pRect, HWND hwndTarget)
+BOOLEAN IsWindowEdgeVisible(HWND hwnd, HWND hwndTop, const RECT * pRect, HWND hwndTarget)
 {
 	RECT rc, rcEdge;
 	HWND hwndNext;

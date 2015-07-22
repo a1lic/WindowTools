@@ -1,8 +1,7 @@
-﻿#ifndef WINDOW_H
-#define WINDOW_H
+﻿#pragma once
 
-#include <windows.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 
 #if _WIN32_WINNT >= 0x600 && defined(ENABLE_THUMBNAIL)
 #include "Thumbnail.h"
@@ -26,7 +25,7 @@ typedef struct SET_WINDOW_LONGPTR_PARAMS SET_WINDOW_LONGPTR_PARAMS;
 struct API_WATCHDOG
 {
 	LPTHREAD_START_ROUTINE proc;
-	void *parameter;
+	void * parameter;
 	unsigned int timeout_sec;
 };
 typedef struct API_WATCHDOG API_WATCHDOG;
@@ -43,7 +42,7 @@ private:
 	INT64 item_time_stamp;
 	DWORD process;
 #if _WIN32_WINNT >= 0x600 && defined(ENABLE_THUMBNAIL)
-	class Thumbnail *thumb;
+	class Thumbnail * thumb;
 #endif
 	bool is_unicode_window;
 
@@ -61,20 +60,20 @@ public:
 	HICON GetCaptionIcon(){return w_icon_small;}
 	HICON GetProcessIcon(){return e_icon;}
 
-	INT_PTR SendMsg(UINT,WPARAM,LPARAM);
-	bool SendMsg(UINT,WPARAM,LPARAM,UINT,DWORD_PTR*);
-	void PostMsg(UINT,WPARAM,LPARAM);
+	INT_PTR SendMsg(UINT, WPARAM, LPARAM);
+	bool SendMsg(UINT, WPARAM, LPARAM, UINT, DWORD_PTR *);
+	void PostMsg(UINT, WPARAM, LPARAM);
 
 	void UpdateIcon();
 
-	void GetWindowLocation(POINT*,SIZE*);
-	void GetClientLocation(POINT*,SIZE*);
-	void SetWindowLocation(const POINT*,const SIZE*);
-	void SetClientLocation(const POINT*,const SIZE*);
-	void Move(const POINT*);
-	void ClientMove(const POINT*);
-	void Resize(const SIZE*);
-	void ClientResize(const SIZE*);
+	void GetWindowLocation(POINT *, SIZE *);
+	void GetClientLocation(POINT *, SIZE *);
+	void SetWindowLocation(const POINT *, const SIZE *);
+	void SetClientLocation(const POINT *, const SIZE *);
+	void Move(const POINT *);
+	void ClientMove(const POINT *);
+	void Resize(const SIZE *);
+	void ClientResize(const SIZE *);
 
 	DWORD GetStyle();
 	void SetStyle(DWORD);
@@ -92,7 +91,7 @@ public:
 	void SetCaption(PCTSTR);
 	PTSTR GetClassName2();
 
-	void GetDispInfo(NMLVDISPINFO*,class WindowList*);
+	void GetDispInfo(NMLVDISPINFO *,class WindowList *);
 
 	void PopupThumbnail();
 
@@ -103,4 +102,3 @@ public:
 private:
 	HICON get_icon_handle(bool);
 };
-#endif

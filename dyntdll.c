@@ -1,15 +1,14 @@
 ﻿#include <ntstatus.h>
 #define WIN32_NO_STATUS
-/*#include <assert.h>*/
 #include <tchar.h>
-#include <windows.h>
+#include <Windows.h>
 #include "dyntdll.h"
 
 typedef NTSTATUS (NTAPI * NTSETTIMERRESOLUTION)(ULONG, BOOLEAN, PULONG);
 typedef NTSTATUS (NTAPI * NTQUERYTIMERRESOLUTION)(PULONG, PULONG, PULONG);
 
-HMODULE                ntdll;
-NTSETTIMERRESOLUTION   _NtSetTimerResolution;
+HMODULE ntdll;
+NTSETTIMERRESOLUTION _NtSetTimerResolution;
 NTQUERYTIMERRESOLUTION _NtQueryTimerResolution;
 
 void InitializeNtDllRuntimeLinker()
@@ -17,7 +16,7 @@ void InitializeNtDllRuntimeLinker()
 	ntdll = LoadLibrary(TEXT("NTDLL.DLL"));
 	if(ntdll)
 	{
-		_NtSetTimerResolution   = (NTSETTIMERRESOLUTION)GetProcAddress(ntdll, "ZwSetTimerResolution");
+		_NtSetTimerResolution = (NTSETTIMERRESOLUTION)GetProcAddress(ntdll, "ZwSetTimerResolution");
 		_NtQueryTimerResolution = (NTQUERYTIMERRESOLUTION)GetProcAddress(ntdll, "ZwQueryTimerResolution");
 	}
 }

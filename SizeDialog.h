@@ -1,12 +1,9 @@
-﻿#ifndef SIZEDIALOG_H
-#define SIZEDIALOG_H
-
-#pragma once
+﻿#pragma once
 
 #include <stddef.h>
-#include <windows.h>
+#include <Windows.h>
 
-typedef void (CALLBACK *SIZEDIALOGAPPLY)(void*,ULONG,const POINT*,const SIZE*,const TCHAR*);
+typedef void (CALLBACK * SIZEDIALOGAPPLY)(void *, ULONG, const POINT *, const SIZE *, const TCHAR *);
 
 struct ENUMMONITORPARAM
 {
@@ -19,7 +16,7 @@ struct SIZEDIALOGPARAM
 {
 	HWND target;
 	SIZEDIALOGAPPLY callback;
-	void *callback_param;
+	void * callback_param;
 };
 typedef struct SIZEDIALOGPARAM SIZEDIALOGPARAM;
 
@@ -55,9 +52,9 @@ private:
 	HWND p_target;
 	POINT p_pos;
 	SIZE p_size;
-	TCHAR *p_caption_text;
+	TCHAR * p_caption_text;
 	SIZEDIALOGAPPLY p_callback;
-	void *p_callback_param;
+	void * p_callback_param;
 	bool p_do_apply;
 
 private:
@@ -69,17 +66,15 @@ public:
 	intptr_t AddRef();
 	intptr_t Release();
 
-	static INT_PTR CALLBACK DialogProc(HWND,UINT,WPARAM,LPARAM);
+	static INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 
 private:
 	// メッセージハンドラ
 	void do_destroy();
-	void do_notify(NMHDR*);
+	void do_notify(NMHDR *);
 	void do_initdialog(LPARAM);
-	void do_command(WORD,WORD,HWND);
+	void do_command(WORD, WORD, HWND);
 	// 内部関数
-	void calc_window_position(ULONG,HMONITOR,RECT*);
-	static BOOL CALLBACK enum_monitors(HMONITOR,HDC,LPRECT,LPARAM);
+	void calc_window_position(ULONG, HMONITOR, RECT *);
+	static BOOL CALLBACK enum_monitors(HMONITOR, HDC, LPRECT, LPARAM);
 };
-
-#endif

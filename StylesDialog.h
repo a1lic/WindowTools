@@ -1,13 +1,10 @@
-﻿#ifndef STYLESDIALOG_H
-#define STYLESDIALOG_H
-
-#pragma once
+﻿#pragma once
 
 #include <stddef.h>
-#include <windows.h>
-#include <commctrl.h>
+#include <Windows.h>
+#include <CommCtrl.h>
 
-typedef void (CALLBACK *STYLEDIALOGAPPLY)(void*,DWORD,DWORD);
+typedef void (CALLBACK * STYLEDIALOGAPPLY)(void *, DWORD, DWORD);
 
 struct STYLEBITMAP
 {
@@ -36,7 +33,7 @@ private:
 	DWORD p_style;
 	DWORD p_extend_style;
 	STYLEDIALOGAPPLY p_callback;
-	void *p_callback_param;
+	void * p_callback_param;
 	bool p_do_apply;
 	static const STYLEBITMAP basic_window_styles[16];
 	static const STYLEBITMAP extend_window_styles[16];
@@ -53,17 +50,15 @@ public:
 	intptr_t AddRef();
 	intptr_t Release();
 
-	static INT_PTR CALLBACK DialogProc(HWND,UINT,WPARAM,LPARAM);
+	static INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 
 private:
 	void do_destroy();
-	void do_notify(NMHDR*);
+	void do_notify(NMHDR *);
 	void do_initdialog(LPARAM);
 	void do_timer(UINT_PTR);
-	//void do_command(WORD,WORD,HWND);
-	void get_styles(DWORD*,DWORD*);
+	//void do_command(WORD, WORD, HWND);
+	void get_styles(DWORD *,DWORD *);
 	static DWORD get_checked_styles(HWND);
-	static void add_styles(HWND,DWORD,const STYLEBITMAP[],unsigned char);
+	static void add_styles(HWND, DWORD, const STYLEBITMAP[], unsigned char);
 };
-
-#endif
