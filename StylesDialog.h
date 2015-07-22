@@ -36,7 +36,7 @@ private:
 	void * p_callback_param;
 	bool p_do_apply;
 	static const STYLEBITMAP basic_window_styles[16];
-	static const STYLEBITMAP extend_window_styles[21];
+	static const STYLEBITMAP extend_window_styles[22];
 	static const LVCOLUMN dummycolumn;
 
 private:

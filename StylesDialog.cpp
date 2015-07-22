@@ -166,7 +166,7 @@ void StylesDialog::do_initdialog(LPARAM l)
 
 	// 基本スタイルと拡張スタイルを追加する。
 	add_styles(p_style_list, p_style,basic_window_styles, 16);
-	add_styles(p_extend_style_list, p_extend_style,extend_window_styles, 21);
+	add_styles(p_extend_style_list, p_extend_style,extend_window_styles, 22);
 
 	// ダミー列の幅を調整する。
 	ListView_SetColumnWidth(p_style_list, 0, LVSCW_AUTOSIZE_USEHEADER);
@@ -310,7 +310,7 @@ const STYLEBITMAP StylesDialog::basic_window_styles[16] = {
 	{TEXT("ポップアップ"), WS_POPUP}};
 
 // 拡張スタイル
-const STYLEBITMAP StylesDialog::extend_window_styles[21] = {
+const STYLEBITMAP StylesDialog::extend_window_styles[22] = {
 	{TEXT("モーダルフレーム"), WS_EX_DLGMODALFRAME},
 	{TEXT("親ウィンドウへの通知無し"), WS_EX_NOPARENTNOTIFY},
 	{TEXT("最前面表示"), WS_EX_TOPMOST},
@@ -331,7 +331,8 @@ const STYLEBITMAP StylesDialog::extend_window_styles[21] = {
 	{TEXT("レイアウトの継承無し"), WS_EX_NOINHERITLAYOUT},
 	{TEXT("配置を左右反転"), WS_EX_LAYOUTRTL},
 	{TEXT("アクティブ不可"), WS_EX_NOACTIVATE},
-	{TEXT("WS_EX_COMPOSITED"), WS_EX_COMPOSITED} };
+	{TEXT("WS_EX_COMPOSITED"), WS_EX_COMPOSITED},
+	{TEXT("リダイレクトサーフェスなし"), WS_EX_NOREDIRECTIONBITMAP}};
 
 // ダミー列(非表示)
 const LVCOLUMN StylesDialog::dummycolumn = {0, 0, 0, NULL, 0, 0, 0, 0};
