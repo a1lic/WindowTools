@@ -71,4 +71,6 @@ EXTERN_C void SnapWindow(HWND, RECT *, int, HWND);
 EXTERN_C BOOL CALLBACK SnapWindowProc(HWND, LPARAM);
 EXTERN_C BOOLEAN IsWindowEdgeVisible(HWND, HWND, const RECT *, HWND);
 
+EXTERN_C BOOLEAN InitComctl32();
+
 #define TO_BOOLEAN(e) ((uintptr_t)(e) != 0)

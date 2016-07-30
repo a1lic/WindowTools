@@ -568,7 +568,19 @@ unsigned __int64 get_system_time()
 	FILETIME current;
 
 #if (NTDDI_VERSION >= NTDDI_WIN8)
-	::GetSystemTimePreciseAsFileTime(&current);
+	void (WINAPI * _GetSystemTimePreciseAsFileTime)(LPFILETIME);
+	HMODULE kernel32;
+	kernel32 = ::LoadLibrary(TEXT("Kernel32.dll"));
+	_GetSystemTimePreciseAsFileTime = (void (WINAPI *)(LPFILETIME))::GetProcAddress(kernel32, "GetSystemTimePreciseAsFileTime");
+	if(_GetSystemTimePreciseAsFileTime)
+	{
+		(*_GetSystemTimePreciseAsFileTime)(&current);
+	}
+	else
+	{
+		::GetSystemTimeAsFileTime(&current);
+	}
+	FreeLibrary(kernel32);
 #else
 	::GetSystemTimeAsFileTime(&current);
 #endif
@@ -651,7 +663,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	bool loaded_oem_small_icon;
 
 	::LocalHeapInitialize();
-	::InitCommonControls();
+	::InitComctl32();
 
 	ntdll = ::LoadLibrary(TEXT("NTDLL.DLL"));
 	if(ntdll)

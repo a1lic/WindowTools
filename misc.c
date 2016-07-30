@@ -13,6 +13,8 @@ union NTQUERYTIMERRESOLUTION u_NtQueryTimerResolution;
 DWORD feature_flags;
 HANDLE main_heap;
 
+LONG WINAPI RtlGetVersion(RTL_OSVERSIONINFOEXW *);
+
 void Debug(PCTSTR fmt, ...)
 {
 	va_list ap;
@@ -247,9 +249,13 @@ ULONG QueryTimerResolutions(ULONG * pmin, ULONG * pmax, ULONG * pcur)
 INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	INT_PTR r;
-	OSVERSIONINFOEX version;
+	RTL_OSVERSIONINFOEXW * version;
+	OSVERSIONINFO * version_;
 	TCHAR * str;
 	TCHAR * newstr;
+	DWORD major;
+	DWORD minor;
+	DWORD build_number;
 
 	r = FALSE;
 	switch(uMsg)
@@ -269,20 +275,56 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
 	case WM_INITDIALOG:
 		CenteringWindowToParent(hwndDlg, (HWND)GetWindowLongPtr(hwndDlg, GWLP_HWNDPARENT));
-		memset(&version, 0, sizeof(OSVERSIONINFOEX));
-		version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+		major = 0;
+		minor = 0;
+		build_number = 0;
+
+		version = calloc(1, sizeof(RTL_OSVERSIONINFOEXW));
+		if(version)
+		{
+			version->dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOEXW);
+			if(RtlGetVersion(version) == 0)
+			{
+				major = version->dwMajorVersion;
+				minor = version->dwMinorVersion;
+				build_number = version->dwBuildNumber;
+			}
+		}
+		str = malloc(sizeof(TCHAR) * 1024);
+		if(str)
+		{
+			newstr = malloc(sizeof(TCHAR) * 256);
+			if(newstr)
+			{
+				GetDlgItemText(hwndDlg, 33, str, 1024);
+				_stprintf_s(newstr, 256, _T("\r\nRunning in Windows version %d.%d.%d."), major, minor, build_number);
+				_tcscat_s(str, 1024, newstr);
+
+				major = 0;
+				minor = 0;
+				build_number = 0;
+
+				version_ = calloc(1, sizeof(OSVERSIONINFOEX));
+				if(version_)
+				{
+					version_->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 #pragma warning(push)
 #pragma warning(disable:4996)
-		GetVersionEx((OSVERSIONINFO *)&version);
+					GetVersionEx(version_);
 #pragma warning(pop)
-		str = malloc(sizeof(TCHAR) * 1024);
-		newstr = malloc(sizeof(TCHAR) * 256);
-		GetDlgItemText(hwndDlg, 33, str, 1024);
-		_stprintf_s(newstr, 256, _T("\r\nRunning in Windows version %d.%d.%d."), version.dwMajorVersion, version.dwMinorVersion, version.dwBuildNumber);
-		_tcscat_s(str, 1024, newstr);
-		SetDlgItemText(hwndDlg, 33, str);
-		free(newstr);
-		free(str);
+					major = version_->dwMajorVersion;
+					minor = version_->dwMinorVersion;
+					build_number = version_->dwBuildNumber;
+					free(version_);
+					_stprintf_s(newstr, 256, _T("\r\n%d.%d.%d is reported by compatible layer."), major, minor, build_number);
+					_tcscat_s(str, 1024, newstr);
+				}
+				free(newstr);
+				SetDlgItemText(hwndDlg, 33, str);
+			}
+			free(str);
+		}
 		r = TRUE;
 	}
 	return r;
@@ -654,4 +696,10 @@ BOOLEAN IsWindowEdgeVisible(HWND hwnd, HWND hwndTop, const RECT * pRect, HWND hw
 		}
 	}
 	return IsWindowEdgeVisible(hwnd, hwndNext, pRect, hwndTarget);
+}
+
+BOOLEAN InitComctl32()
+{
+	static const INITCOMMONCONTROLSEX init = { .dwSize = sizeof(INITCOMMONCONTROLSEX), .dwICC = ICC_STANDARD_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TAB_CLASSES | ICC_UPDOWN_CLASS };
+	return InitCommonControlsEx(&init) != 0;
 }
