@@ -83,6 +83,7 @@ public:
 	void EndDragMode();
 	unsigned int GetItemCount();
 	void HandleContextMenu(HMENU);
+	void HandleThemeChange();
 
 private:
 	void delete_all_items();

@@ -109,6 +109,8 @@ void MainWindow::on_winini_change()
 
 	this->p_min_client_area.x = 256 + (r[0].right - r[1].right);
 	this->p_min_client_area.y = 256 + (r[0].bottom - r[1].bottom);
+
+	this->p_list->HandleThemeChange();
 }
 
 void MainWindow::on_get_minmax_info(MINMAXINFO *m)
@@ -454,6 +456,11 @@ LRESULT CALLBACK MainWindow::window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 	case WM_ENTERSIZEMOVE: // 0x0231
 		_this->on_enter_size_move();
+		break;
+
+	case WM_THEMECHANGED: // 0x031A
+		MessageBox(_this->p_window, TEXT("WM_THEMECHANGED"), TEXT("/"), MB_ICONASTERISK);
+		_this->p_list->HandleThemeChange();
 		break;
 
 	default:
