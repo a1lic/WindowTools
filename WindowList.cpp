@@ -133,7 +133,7 @@ WindowList::WindowList(HWND parent, UINT id, HWND target)
 	DestroyIcon(icons[0]);
 
 	styles_mask = WS_MINIMIZE | WS_POPUP | WS_VISIBLE;
-	extend_styles_mask = WS_EX_TOOLWINDOW;
+	extend_styles_mask = WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
 	show_no_title_window = false;
 
 	sort_menu = LoadMenu(instance, MAKEINTRESOURCE(IDM_SORT));

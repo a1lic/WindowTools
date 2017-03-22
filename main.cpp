@@ -257,6 +257,11 @@ void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 		case IDC_OPTION_TOGGLELEFTMENU:
 			::SystemParametersInfo(SPI_SETMENUDROPALIGNMENT, 0, reinterpret_cast<PVOID>(static_cast<intptr_t>(this->p_toggle.left_menu ? FALSE : TRUE)), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
 			break;
+
+		case IDC_VIEW_TOGGLE_NOACTIVE:
+			this->p_list->ToggleExtendStylesMask(WS_EX_NOACTIVATE);
+			this->p_list->Update();
+			break;
 		}
 	}
 }
@@ -322,6 +327,9 @@ void MainWindow::on_enter_menu_loop()
 
 	item_info.fState = p_list->IsShowNoTitleWindow() ? MFS_CHECKED : MFS_UNCHECKED;
 	::SetMenuItemInfo(this->p_menu, IDC_VIEW_TOGGLE_NOTITLE, FALSE, &item_info);
+
+	item_info.fState = (exstyle & WS_EX_NOACTIVATE) ? MFS_UNCHECKED : MFS_CHECKED;
+	::SetMenuItemInfo(this->p_menu, IDC_VIEW_TOGGLE_NOACTIVE, FALSE, &item_info);
 
 	item_info.fState = MFS_GRAYED;
 	::SetMenuItemInfo(this->p_menu, IDC_VIEW_TILE, FALSE, &item_info);
