@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{02CCFD47-81AD-C1BA-8DC1-50E89A4114A2}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -188,6 +188,7 @@
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="ctx.c" />
     <ClCompile Include="dyntdll.c" />
+    <ClCompile Include="ListView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="misc.c" />
     <ClCompile Include="powsavt.c" />
@@ -202,6 +203,7 @@
     <ClInclude Include="AppConfig.h" />
     <ClInclude Include="ctx.h" />
     <ClInclude Include="dyntdll.h" />
+    <ClInclude Include="ListView.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manifests.h" />
     <ClInclude Include="misc.h" />
