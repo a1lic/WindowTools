@@ -40,8 +40,8 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -68,15 +68,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <TargetName>wintools</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
+    <TargetName>wintools</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <TargetName>wintools</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <GenerateManifest>false</GenerateManifest>
+    <TargetName>wintools</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -85,19 +89,19 @@
       <MinimalRebuild>
       </MinimalRebuild>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <SetChecksum>true</SetChecksum>
       <AdditionalDependencies>comctl32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.10</Version>
+      <Version>0.12</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
     </Link>
     <ResourceCompile />
     <Manifest />
@@ -109,19 +113,18 @@
       <MinimalRebuild>
       </MinimalRebuild>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <SetChecksum>true</SetChecksum>
-      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
-      <Version>0.10</Version>
+      <Version>0.12</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
     <ResourceCompile />
     <Manifest />
@@ -136,7 +139,6 @@
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/Og %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -145,13 +147,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>comctl32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
-      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.10</Version>
+      <Version>0.12</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>
@@ -165,7 +168,6 @@
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/Og %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -174,13 +176,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>comctl32.lib;advapi32.lib;shell32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SetChecksum>true</SetChecksum>
-      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(TargetName).manifest" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.10</Version>
+      <Version>0.12</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>
@@ -188,7 +190,6 @@
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="ctx.c" />
     <ClCompile Include="dyntdll.c" />
-    <ClCompile Include="ListView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="misc.c" />
     <ClCompile Include="powsavt.c" />
@@ -203,7 +204,6 @@
     <ClInclude Include="AppConfig.h" />
     <ClInclude Include="ctx.h" />
     <ClInclude Include="dyntdll.h" />
-    <ClInclude Include="ListView.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manifests.h" />
     <ClInclude Include="misc.h" />
