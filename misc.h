@@ -72,5 +72,6 @@ EXTERN_C BOOL CALLBACK SnapWindowProc(HWND, LPARAM);
 EXTERN_C BOOLEAN IsWindowEdgeVisible(HWND, HWND, const RECT *, HWND);
 
 EXTERN_C BOOLEAN InitComctl32();
+EXTERN_C void GetKernelFile(TCHAR*, size_t);
 
 #define TO_BOOLEAN(e) ((uintptr_t)(e) != 0)

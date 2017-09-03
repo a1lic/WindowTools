@@ -13,7 +13,7 @@ union NTQUERYTIMERRESOLUTION u_NtQueryTimerResolution;
 DWORD feature_flags;
 HANDLE main_heap;
 
-LONG WINAPI RtlGetVersion(RTL_OSVERSIONINFOEXW *);
+__declspec(dllimport) LONG WINAPI RtlGetVersion(RTL_OSVERSIONINFOEXW *);
 
 void Debug(PCTSTR fmt, ...)
 {
@@ -252,7 +252,6 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	RTL_OSVERSIONINFOEXW * version;
 	OSVERSIONINFO * version_;
 	TCHAR * str;
-	TCHAR * newstr;
 	DWORD major;
 	DWORD minor;
 	DWORD build_number;
@@ -276,6 +275,10 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	case WM_INITDIALOG:
 		CenteringWindowToParent(hwndDlg, (HWND)GetWindowLongPtr(hwndDlg, GWLP_HWNDPARENT));
 
+		TCHAR * file_name = (TCHAR*)malloc(sizeof(TCHAR) * 256);
+		GetKernelFile(file_name, 256);
+		free(file_name);
+
 		major = 0;
 		minor = 0;
 		build_number = 0;
@@ -294,36 +297,34 @@ INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		str = malloc(sizeof(TCHAR) * 1024);
 		if(str)
 		{
-			newstr = malloc(sizeof(TCHAR) * 256);
-			if(newstr)
+			_stprintf_s(str, 1024, _T("%d.%d.%d"), major, minor, build_number);
+			SetDlgItemText(hwndDlg, 36, str);
+
+			major = 0;
+			minor = 0;
+			build_number = 0;
+
+			version_ = calloc(1, sizeof(OSVERSIONINFOEX));
+			if(version_)
 			{
-				GetDlgItemText(hwndDlg, 33, str, 1024);
-				_stprintf_s(newstr, 256, _T("\r\nRunning in Windows version %d.%d.%d."), major, minor, build_number);
-				_tcscat_s(str, 1024, newstr);
-
-				major = 0;
-				minor = 0;
-				build_number = 0;
-
-				version_ = calloc(1, sizeof(OSVERSIONINFOEX));
-				if(version_)
-				{
-					version_->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+				version_->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 #pragma warning(push)
 #pragma warning(disable:4996)
-					GetVersionEx(version_);
+				GetVersionEx(version_);
 #pragma warning(pop)
-					major = version_->dwMajorVersion;
-					minor = version_->dwMinorVersion;
-					build_number = version_->dwBuildNumber;
-					free(version_);
-					_stprintf_s(newstr, 256, _T("\r\n%d.%d.%d is reported by compatible layer."), major, minor, build_number);
-					_tcscat_s(str, 1024, newstr);
-				}
-				free(newstr);
-				SetDlgItemText(hwndDlg, 33, str);
+				major = version_->dwMajorVersion;
+				minor = version_->dwMinorVersion;
+				build_number = version_->dwBuildNumber;
+				free(version_);
+
+				_stprintf_s(str, 1024, _T("%d.%d.%d"), major, minor, build_number);
+				SetDlgItemText(hwndDlg, 38, str);
 			}
-			free(str);
+		}
+		else
+		{
+			SetDlgItemText(hwndDlg, 36, TEXT("0.0.0"));
+			SetDlgItemText(hwndDlg, 38, TEXT("0.0.0"));
 		}
 		r = TRUE;
 	}
@@ -702,4 +703,44 @@ BOOLEAN InitComctl32()
 {
 	static const INITCOMMONCONTROLSEX init = { .dwSize = sizeof(INITCOMMONCONTROLSEX), .dwICC = ICC_STANDARD_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TAB_CLASSES | ICC_UPDOWN_CLASS };
 	return InitCommonControlsEx(&init) != 0;
+}
+
+#define NT_SYSTEM_PROCESS_ID 4
+
+void GetKernelFile(TCHAR * path, size_t path_elements)
+{
+	DWORD path_elements_d = (DWORD)path_elements;
+	HANDLE kernel_process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, NT_SYSTEM_PROCESS_ID);
+	if(kernel_process)
+	{
+		QueryFullProcessImageName(kernel_process, 0, path, &path_elements_d);
+		CloseHandle(kernel_process);
+	}
+	else
+	{
+		HANDLE snp = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		if(snp == INVALID_HANDLE_VALUE)
+		{
+			*path = TEXT('\0');
+			return;
+		}
+		PROCESSENTRY32 * p = (PROCESSENTRY32*)malloc(sizeof(PROCESSENTRY32));
+		p->dwSize = sizeof(PROCESSENTRY32);
+		BOOL r = Process32First(snp, p);
+		while(r)
+		{
+			p->th32ProcessID = 0;
+			r = Process32Next(snp, p);
+			if(p->th32ProcessID == 4)
+			{
+				_tcsncpy_s(path, path_elements, p->szExeFile, MAX_PATH);
+				break;
+			}
+		}
+		if(p->th32ProcessID != 4)
+		{
+			*path = TEXT('\0');
+		}
+		free(p);
+	}
 }
