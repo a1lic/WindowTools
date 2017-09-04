@@ -13,7 +13,7 @@ const LVCOLUMN WindowList::columns[7] = {
 	/* mask,fmt,cx,pszText,cchTextMax,iSubItem,iImage,iOrder */
 	{LVCF_WIDTH, 0, 0, NULL, 0, 0, 0, 0},
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 128, TEXT("キャプション"), 0, 0, 0, 0},
-	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 96, TEXT("ウィンドウハンドル"), 0, 0, 0, 0},
+	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON | LVCFMT_RIGHT, 96, TEXT("ウィンドウハンドル"), 0, 0, 0, 0},
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 80, TEXT("クラス名"), 0, 0, 0, 0},
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 64, TEXT("状態"), 0, 0, 0, 0},
 	{LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_SPLITBUTTON, 128, TEXT("プロセス"), 0, 0, 0, 0},
@@ -556,9 +556,20 @@ int CALLBACK WindowList::sort_items(LPARAM l1, LPARAM l2, LPARAM l3)
 		{
 			return 1;
 		}
-		ListView_GetItemText(((WindowList *)l3)->listview, (int)l1, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[0], 1024);
-		ListView_GetItemText(((WindowList *)l3)->listview, (int)l2, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[1], 1024);
-		r = _tcscmp(((WindowList *)l3)->tmp[0],((WindowList *)l3)->tmp[1]);
+		if(((WindowList *)l3)->sort_column == 1)
+		{
+			item = (Window *)((WindowList *)l3)->item_param((int)l1);
+			auto h1 = item->GetHandle();
+			item = (Window *)((WindowList *)l3)->item_param((int)l2);
+			auto h2 = item->GetHandle();
+			r = (intptr_t)h1 - (intptr_t)h2;
+		}
+		else
+		{
+			ListView_GetItemText(((WindowList *)l3)->listview, (int)l1, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[0], 1024);
+			ListView_GetItemText(((WindowList *)l3)->listview, (int)l2, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[1], 1024);
+			r = _tcscmp(((WindowList *)l3)->tmp[0], ((WindowList *)l3)->tmp[1]);
+		}
 		break;
 	case WLSM_DSC:
 		item = (Window *)((WindowList *)l3)->item_param((int)l1);
@@ -571,9 +582,20 @@ int CALLBACK WindowList::sort_items(LPARAM l1, LPARAM l2, LPARAM l3)
 		{
 			return 1;
 		}
-		ListView_GetItemText(((WindowList *)l3)->listview, (int)l1, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[0],1024);
-		ListView_GetItemText(((WindowList *)l3)->listview, (int)l2, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[1],1024);
-		r = _tcscmp(((WindowList *)l3)->tmp[1],((WindowList *)l3)->tmp[0]);
+		if(((WindowList *)l3)->sort_column == 1)
+		{
+			item = (Window *)((WindowList *)l3)->item_param((int)l1);
+			auto h1 = item->GetHandle();
+			item = (Window *)((WindowList *)l3)->item_param((int)l2);
+			auto h2 = item->GetHandle();
+			r = (intptr_t)h2 - (intptr_t)h1;
+		}
+		else
+		{
+			ListView_GetItemText(((WindowList *)l3)->listview, (int)l1, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[0], 1024);
+			ListView_GetItemText(((WindowList *)l3)->listview, (int)l2, ((WindowList *)l3)->sort_column, ((WindowList *)l3)->tmp[1], 1024);
+			r = _tcscmp(((WindowList *)l3)->tmp[1], ((WindowList *)l3)->tmp[0]);
+		}
 		break;
 	}
 	return r;
@@ -724,7 +746,7 @@ int WindowList::add(Window * witem)
 		return -1;
 	}
 
-	_sntprintf_s(str, 32, _TRUNCATE, TEXT("0x%p"), witem->GetHandle());
+	_sntprintf_s(str, 32, _TRUNCATE, TEXT("0x%IX"), (uintptr_t)witem->GetHandle());
 	item.mask = LVIF_TEXT;
 	item.iItem = i;
 	item.iSubItem = 1;
