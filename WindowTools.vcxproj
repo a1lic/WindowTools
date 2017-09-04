@@ -125,7 +125,7 @@
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -149,7 +149,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>advapi32.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -168,6 +168,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/Og %(AdditionalOptions)</AdditionalOptions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,11 +179,12 @@
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>
@@ -197,6 +199,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/Og %(AdditionalOptions)</AdditionalOptions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -207,10 +210,11 @@
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
       <EnableUAC>false</EnableUAC>
       <ManifestFile />
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <SwapRunFromCD>true</SwapRunFromCD>
       <SwapRunFromNET>true</SwapRunFromNET>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>
@@ -227,7 +231,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <AdditionalDependencies>comctl32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EnableUAC>false</EnableUAC>
       <SubSystem>Windows</SubSystem>
@@ -248,20 +252,18 @@
       <Optimization>Custom</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
       <PreprocessorDefinitions>OEMRESOURCE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <AdditionalOptions>/Og %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <Version>0.12</Version>
+      <Version>0.13</Version>
       <AdditionalDependencies>comctl32.lib;uxtheme.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EnableUAC>false</EnableUAC>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SetChecksum>true</SetChecksum>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalOptions>/PDBALTPATH:"$(TargetName).pdb" /MANIFEST:EMBED /MANIFESTINPUT:"$(ProjectName).manifest" %(AdditionalOptions)</AdditionalOptions>
