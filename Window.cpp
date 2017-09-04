@@ -126,13 +126,7 @@ void Window::ZoomClient(float factor)
 	s.cx = (LONG)((float)s.cx * factor);
 	s.cy = (LONG)((float)s.cy * factor);
 
-	SIZE ns;
-	do
-	{
-		this->ClientResize(&s);
-		this->GetClientLocation(nullptr, &ns);
-	}
-	while(memcmp(&ns, &s, sizeof(SIZE)));
+	this->ClientResize(&s);
 }
 
 void Window::AdjustWide(AdjustBase ab)
@@ -268,7 +262,12 @@ void Window::Resize(const SIZE * size)
 
 void Window::ClientResize(const SIZE * size)
 {
-	SetClientLocation(NULL, size);
+	SIZE ns;
+	do
+	{
+		this->SetClientLocation(nullptr, size);
+		this->GetClientLocation(nullptr, &ns);
+	} while(memcmp(&ns, size, sizeof(SIZE)));
 }
 
 DWORD Window::GetStyle()
