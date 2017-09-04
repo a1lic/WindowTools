@@ -62,6 +62,9 @@ IDM_OP MENU
 		MENUITEM "最前面に持ってくる(&A)",IDC_BRINGTOFRONT
 		MENUITEM "最背面に持って行く(&S)",IDC_SINKTOBOTTOM
 		MENUITEM SEPARATOR
+		MENUITEM "クライアント領域を4倍に拡大(&X)",IDC_EXPANDCLIENT
+		MENUITEM "クライアント領域を4倍に縮小(&H)",IDC_SHRINKCLIENT
+		MENUITEM SEPARATOR
 		MENUITEM "プロパティ(&P)...",IDC_WINDOWCONFIG
 	}
 }
@@ -83,7 +86,7 @@ IDD_ABOUT DIALOGEX 0,0,187,79
 {
 	CONTROL IDI_MAIN,IDC_APPICON,"Static",SS_ICON,7,7,18,21
 	CONTROL "閉じる(&C)",IDOK,"Button",WS_TABSTOP,69,58,50,14
-	CONTROL "Window Tools 0.12 (Unicode edition)",IDC_VERSTR,"Static",0,32,7,150,8
+	CONTROL "Window Tools 0.13 (Unicode edition)",IDC_VERSTR,"Static",0,32,7,150,8
 	CONTROL "© 2017 alice",IDC_COPYRIGHT,"Static",0,32,16,150,8
 	CONTROL "OS Version",IDC_OSVER_REAL_LABEL,"Static",0,32,27,40,8
 	CONTROL "",IDC_OSVER_REAL,"Edit",ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_TABSTOP,76,25,40,12
@@ -162,8 +165,8 @@ IDD_POWERSAVE_TIMER DIALOGEX 0,0,160,81
 #endif
 
 VS_VERSION_INFO VERSIONINFO
-	FILEVERSION 0,12,0,0
-	PRODUCTVERSION 0,12,0,0
+	FILEVERSION 0,13,0,0
+	PRODUCTVERSION 0,13,0,0
 #ifdef UNICODE
 	FILEOS VOS_NT_WINDOWS32 // see Winnt.h
 #else
@@ -180,12 +183,12 @@ VS_VERSION_INFO VERSIONINFO
 		{
 			VALUE "CompanyName","alice"
 			VALUE "FileDescription","ウィンドウ属性の操作ツール"
-			VALUE "FileVersion", "0.12" DEBUGVERSION
+			VALUE "FileVersion", "0.13" DEBUGVERSION
 			VALUE "InternalName","yukikaze"
 			VALUE "LegalCopyright", "© 2017 alice"
 			VALUE "OriginalFilename","wintools.exe"
 			VALUE "ProductName","Window Tools"
-			VALUE "ProductVersion","0.12" DEBUGVERSION
+			VALUE "ProductVersion","0.13" DEBUGVERSION
 		}
 	}
 	BLOCK "VarFileInfo"

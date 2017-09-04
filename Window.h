@@ -85,6 +85,7 @@ public:
 	void Restore();
 	void BringToTop();
 	void SinkToBottom();
+	void ZoomClient(float);
 
 	unsigned int GetCaptionLength();
 	PTSTR GetCaption();

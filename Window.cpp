@@ -117,6 +117,18 @@ void Window::SinkToBottom()
 	SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+void Window::ZoomClient(float factor)
+{
+	POINT p;
+	SIZE s;
+	this->GetClientLocation(&p, &s);
+
+	s.cx *= factor;
+	s.cy *= factor;
+
+	this->ClientResize(&s);
+}
+
 void Window::GetWindowLocation(POINT * pos, SIZE * size)
 {
 	RECT window_rect;

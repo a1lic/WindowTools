@@ -448,6 +448,7 @@ void WindowList::HandleContextMenu(HMENU menu)
 {
 	int id;
 	POINT p;
+	Window * w;
 
 	id = find_next_selected_item(-1, NULL);
 	if(id > -1)
@@ -467,6 +468,16 @@ void WindowList::HandleContextMenu(HMENU menu)
 
 		case IDC_WINDOWCONFIG:
 			ShowProperty();
+			break;
+
+		case IDC_EXPANDCLIENT:
+			id = find_next_selected_item(-1, &w);
+			w->ZoomClient(2.0);
+			break;
+
+		case IDC_SHRINKCLIENT:
+			id = find_next_selected_item(-1, &w);
+			w->ZoomClient(0.5);
 			break;
 		}
 	}
