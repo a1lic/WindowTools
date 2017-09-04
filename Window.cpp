@@ -123,8 +123,8 @@ void Window::ZoomClient(float factor)
 	SIZE s;
 	this->GetClientLocation(&p, &s);
 
-	s.cx *= factor;
-	s.cy *= factor;
+	s.cx = (LONG)((float)s.cx * factor);
+	s.cy = (LONG)((float)s.cy * factor);
 
 	this->ClientResize(&s);
 }
