@@ -471,13 +471,33 @@ void WindowList::HandleContextMenu(HMENU menu)
 			break;
 
 		case IDC_EXPANDCLIENT:
-			id = find_next_selected_item(-1, &w);
+			this->find_next_selected_item(-1, &w);
 			w->ZoomClient(2.0);
 			break;
 
 		case IDC_SHRINKCLIENT:
-			id = find_next_selected_item(-1, &w);
+			this->find_next_selected_item(-1, &w);
 			w->ZoomClient(0.5);
+			break;
+
+		case IDC_WIDE_BY_WIDTH:
+			this->find_next_selected_item(-1, &w);
+			w->AdjustWide(AdjustBase::ByWidth);
+			break;
+
+		case IDC_WIDE_BY_HEIGHT:
+			this->find_next_selected_item(-1, &w);
+			w->AdjustWide(AdjustBase::ByHeight);
+			break;
+
+		case IDC_EDISON_BY_WIDTH:
+			this->find_next_selected_item(-1, &w);
+			w->AdjustEdison(AdjustBase::ByWidth);
+			break;
+
+		case IDC_EDISON_BY_HEIGHT:
+			this->find_next_selected_item(-1, &w);
+			w->AdjustEdison(AdjustBase::ByHeight);
 			break;
 		}
 	}

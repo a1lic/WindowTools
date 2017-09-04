@@ -135,6 +135,42 @@ void Window::ZoomClient(float factor)
 	while(memcmp(&ns, &s, sizeof(SIZE)));
 }
 
+void Window::AdjustWide(AdjustBase ab)
+{
+	SIZE s;
+	this->GetClientLocation(nullptr, &s);
+
+	switch(ab)
+	{
+	case AdjustBase::ByWidth:
+		s.cy = (LONG)((double)s.cx * (9.0 / 16.0));
+		break;
+	case AdjustBase::ByHeight:
+		s.cx = (LONG)((double)s.cy * (16.0 / 9.0));
+		break;
+	}
+
+	this->ClientResize(&s);
+}
+
+void Window::AdjustEdison(AdjustBase ab)
+{
+	SIZE s;
+	this->GetClientLocation(nullptr, &s);
+
+	switch(ab)
+	{
+	case AdjustBase::ByWidth:
+		s.cy = (LONG)((double)s.cx * (3.0 / 4.0));
+		break;
+	case AdjustBase::ByHeight:
+		s.cx = (LONG)((double)s.cy * (4.0 / 3.0));
+		break;
+	}
+
+	this->ClientResize(&s);
+}
+
 void Window::GetWindowLocation(POINT * pos, SIZE * size)
 {
 	RECT window_rect;

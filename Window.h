@@ -30,6 +30,11 @@ struct API_WATCHDOG
 };
 typedef struct API_WATCHDOG API_WATCHDOG;
 
+enum AdjustBase
+{
+	ByWidth, ByHeight
+};
+
 class Window
 {
 private:
@@ -86,6 +91,8 @@ public:
 	void BringToTop();
 	void SinkToBottom();
 	void ZoomClient(float);
+	void AdjustWide(AdjustBase);
+	void AdjustEdison(AdjustBase);
 
 	unsigned int GetCaptionLength();
 	PTSTR GetCaption();

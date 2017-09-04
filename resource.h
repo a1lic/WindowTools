@@ -35,11 +35,15 @@
 #define IDC_VIEW_TOGGLE_NOACTIVE 23
 
 /* IDM_OP Items */
-#define IDC_BRINGTOFRONT 1
-#define IDC_SINKTOBOTTOM 2
-#define IDC_WINDOWCONFIG 3
-#define IDC_EXPANDCLIENT 4
-#define IDC_SHRINKCLIENT 5
+#define IDC_BRINGTOFRONT       1
+#define IDC_SINKTOBOTTOM       2
+#define IDC_WINDOWCONFIG       3
+#define IDC_EXPANDCLIENT       4
+#define IDC_SHRINKCLIENT       5
+#define IDC_WIDE_BY_WIDTH      6
+#define IDC_WIDE_BY_HEIGHT     7
+#define IDC_EDISON_BY_WIDTH    8
+#define IDC_EDISON_BY_HEIGHT   9
 
 /* IDM_SORT Items */
 #define IDC_SORT_NONE 1
