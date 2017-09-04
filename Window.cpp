@@ -126,7 +126,13 @@ void Window::ZoomClient(float factor)
 	s.cx = (LONG)((float)s.cx * factor);
 	s.cy = (LONG)((float)s.cy * factor);
 
-	this->ClientResize(&s);
+	SIZE ns;
+	do
+	{
+		this->ClientResize(&s);
+		this->GetClientLocation(nullptr, &ns);
+	}
+	while(memcmp(&ns, &s, sizeof(SIZE)));
 }
 
 void Window::GetWindowLocation(POINT * pos, SIZE * size)
