@@ -3,7 +3,48 @@
 #include <math.h>
 #include <tchar.h>
 #include <Windows.h>
-#include <TlHelp32.h>
+#pragma region TlHelp32.h
+#define _INC_TOOLHELP32
+struct tagPROCESSENTRY32
+{
+	DWORD dwSize;
+	DWORD cntUsage;
+	DWORD th32ProcessID; // this process
+	ULONG_PTR th32DefaultHeapID;
+	DWORD th32ModuleID; // associated exe
+	DWORD cntThreads;
+	DWORD th32ParentProcessID; // this process's parent process
+	LONG pcPriClassBase; // Base priority of process's threads
+	DWORD dwFlags;
+	CHAR szExeFile[MAX_PATH]; // Path
+};
+typedef struct tagPROCESSENTRY32 PROCESSENTRY32;
+struct tagPROCESSENTRY32W
+{
+	DWORD dwSize;
+	DWORD cntUsage;
+	DWORD th32ProcessID; // this process
+	ULONG_PTR th32DefaultHeapID;
+	DWORD th32ModuleID; // associated exe
+	DWORD cntThreads;
+	DWORD th32ParentProcessID; // this process's parent process
+	LONG pcPriClassBase; // Base priority of process's threads
+	DWORD dwFlags;
+	WCHAR szExeFile[MAX_PATH]; // Path
+};
+typedef struct tagPROCESSENTRY32W PROCESSENTRY32W;
+extern __declspec(dllimport) HANDLE WINAPI CreateToolhelp32Snapshot(DWORD dwFlags, DWORD th32ProcessID);
+extern __declspec(dllimport) BOOL WINAPI Process32First (HANDLE hSnapshot, PROCESSENTRY32 * lppe);
+extern __declspec(dllimport) BOOL WINAPI Process32FirstW(HANDLE hSnapshot, PROCESSENTRY32W * lppe);
+extern __declspec(dllimport) BOOL WINAPI Process32Next (HANDLE hSnapshot, PROCESSENTRY32 * lppe);
+extern __declspec(dllimport) BOOL WINAPI Process32NextW(HANDLE hSnapshot, PROCESSENTRY32W * lppe);
+#if defined(UNICODE)
+#define PROCESSENTRY32 PROCESSENTRY32W
+#define Process32First Process32FirstW
+#define Process32Next Process32NextW
+#endif
+#define TH32CS_SNAPPROCESS 2
+#pragma endregion TlHelp32.h
 #include <CommCtrl.h>
 #include "misc.h"
 
