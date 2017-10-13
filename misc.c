@@ -248,6 +248,7 @@ ULONG QueryTimerResolutions(ULONG * pmin, ULONG * pmax, ULONG * pcur)
 
 INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(lParam);
 	INT_PTR r;
 	RTL_OSVERSIONINFOEXW * version;
 	OSVERSIONINFO * version_;
@@ -373,11 +374,13 @@ BOOLEAN GetProcessNameFromId(DWORD id, PTSTR name, size_t name_s)
 	qfpin_result = QueryFullProcessImageName(s, PROCESS_NAME_NATIVE, name, &name_size);
 	CloseHandle(s);
 
-	return qfpin_result;
+	return (BOOLEAN)qfpin_result;
 }
 
 void CleanupListView(HWND window, HANDLE heap)
 {
+	UNREFERENCED_PARAMETER(window);
+	UNREFERENCED_PARAMETER(heap);
 }
 
 void GetClientRectAsScreenPos(HWND window, RECT * rc)

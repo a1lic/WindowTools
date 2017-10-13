@@ -214,11 +214,21 @@ void Window::SetWindowLocation(const POINT * pos, const SIZE * size)
 		y = pos->y;
 		flags ^= SWP_NOMOVE;
 	}
+	else
+	{
+		x = 0;
+		y = 0;
+	}
 	if(size)
 	{
 		w = size->cx;
 		h = size->cy;
 		flags ^= SWP_NOSIZE;
+	}
+	else
+	{
+		w = 0;
+		h = 0;
 	}
 	SetWindowPos(handle, NULL, x, y, w, h, flags);
 }
@@ -364,7 +374,8 @@ PTSTR Window::GetCaption()
 	if(n > 0)
 	{
 		n++;
-		if(caption = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n))
+		caption = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n);
+		if(caption)
 		{
 			GetWindowText(handle, caption, n);
 		}
@@ -426,10 +437,12 @@ PTSTR Window::GetClassName2()
 	TCHAR tmp_class_name[256];
 	PTSTR class_name;
 
-	if(n = GetClassName(handle, tmp_class_name, 256))
+	n = GetClassName(handle, tmp_class_name, 256);
+	if(n)
 	{
 		n++;
-		if(class_name = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n))
+		class_name = (PTSTR)LocalHeapAlloc(sizeof(TCHAR) * n);
+		if(class_name)
 		{
 			_tcsncpy_s(class_name, n, tmp_class_name, _TRUNCATE);
 		}
@@ -508,12 +521,8 @@ HICON Window::get_icon_handle(bool small_icon)
 		}
 	}
 
-	if(icon = (HICON)GetClassLongPtr(handle, small_icon ? GCLP_HICONSM : GCLP_HICON))
-	{
-		return icon;
-	}
-
-	return NULL;
+	icon = (HICON)GetClassLongPtr(handle, small_icon ? GCLP_HICONSM : GCLP_HICON);
+	return icon;
 }
 
 DWORD WINAPI Window::set_caption_thread(LPVOID lpParameter)
@@ -529,7 +538,7 @@ DWORD WINAPI Window::set_window_longptr_thread(LPVOID lpParameter)
 	if(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->nIndex == GWL_STYLE)
 	{
 		new_style = (DWORD)(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->dwNewLong & 0xFFFFFFFFUL);
-		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd,GWL_STYLE);
+		old_style = (DWORD)GetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, GWL_STYLE);
 		if((new_style & WS_MAXIMIZE) && !(old_style & WS_MAXIMIZE))
 		{
 			ShowWindow(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, SW_MAXIMIZE);
@@ -558,6 +567,8 @@ DWORD WINAPI Window::set_window_longptr_thread(LPVOID lpParameter)
 		}
 		new_style &= ~WS_EX_TOPMOST;
 	}
+	else
+		return 0;
 
 	SetWindowLongPtr(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, ((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->nIndex, new_style);
 	SetWindowPos(((const SET_WINDOW_LONGPTR_PARAMS *)lpParameter)->hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);

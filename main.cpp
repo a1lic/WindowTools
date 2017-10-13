@@ -66,8 +66,10 @@ void MainWindow::on_destroy()
 
 void MainWindow::on_move(unsigned int x, unsigned int y)
 {
-	RECT r;
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 
+	RECT r;
 	::GetWindowRect(this->p_window, &r);
 	this->p_pos.x = r.left;
 	this->p_pos.y = r.top;
@@ -120,6 +122,8 @@ void MainWindow::on_get_minmax_info(MINMAXINFO *m)
 
 bool MainWindow::on_contextmenu(HWND wnd, unsigned int x, unsigned int y)
 {
+	UNREFERENCED_PARAMETER(x);
+	UNREFERENCED_PARAMETER(y);
 	HMENU context_menu;
 
 	if(wnd == this->p_list->GetWindowHandle())
@@ -137,6 +141,7 @@ bool MainWindow::on_contextmenu(HWND wnd, unsigned int x, unsigned int y)
 
 void MainWindow::on_command(unsigned int id, unsigned int type, HWND cwindow)
 {
+	UNREFERENCED_PARAMETER(cwindow);
 	DWORD exstyle;
 	bool is_menu;
 
@@ -637,20 +642,16 @@ LRESULT CALLBACK kbd_watchdog(int nCode, WPARAM wParam, LPARAM lParam)
 
 unsigned __stdcall main_window_thread(void * arg)
 {
-	MSG msg;
-	MainWindow * rarg;
-	HWND window;
-	HHOOK hook;
-
-	rarg = new MainWindow(reinterpret_cast<const THREAD_PARAM *>(arg)->instance);
-
-	window = rarg->ShowWindow2(reinterpret_cast<const THREAD_PARAM *>(arg)->show);
+	auto rarg = new MainWindow(reinterpret_cast<const THREAD_PARAM *>(arg)->instance);
+	auto window = rarg->ShowWindow2(reinterpret_cast<const THREAD_PARAM *>(arg)->show);
+	unsigned rcode;
 	if(window)
 	{
-		hook = ::SetWindowsHookEx(WH_KEYBOARD, kbd_watchdog, nullptr, GetCurrentThreadId());
+		auto hook = ::SetWindowsHookEx(WH_KEYBOARD, kbd_watchdog, nullptr, GetCurrentThreadId());
 
 		::SendMessage(window, WM_SETTINGCHANGE, 0, 0);
 
+		MSG msg;
 		// BOOLは符号付き整数なのでこのような比較でも問題はない
 		while(::GetMessage(&msg, nullptr, 0, 0) > 0)
 		{
@@ -659,14 +660,19 @@ unsigned __stdcall main_window_thread(void * arg)
 		}
 
 		UnhookWindowsHookEx(hook);
+		rcode = msg.wParam & 0xFF;
 	}
+	else
+		rcode = 0;
 
 	delete rarg;
-	return static_cast<unsigned>(msg.wParam & 0xFF);
+	return rcode;
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 	WNDCLASSEX wc;
 	THREAD_PARAM p;
 	ATOM catom;

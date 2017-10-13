@@ -62,6 +62,7 @@ const LVTILEINFO WindowList::tile_info2 = {
 
 WindowList::WindowList(HWND parent, UINT id, HWND target)
 {
+	UNREFERENCED_PARAMETER(target);
 	HINSTANCE instance;
 	char i;
 	HICON icons[2];
@@ -318,14 +319,16 @@ LRESULT WindowList::Notify(const NMHDR * nm)
 #if _WIN32_WINNT >= 0x600
 	case LVN_COLUMNDROPDOWN:
 		// 未対応だとそもそもこの処理が行われないのでバージョンチェックは無し
-		if(head = ListView_GetHeader(listview))
+		head = ListView_GetHeader(listview);
+		if(head)
 		{
 			if(Header_GetItemRect(head,((const NMLISTVIEW *)nm)->iSubItem, &irc))
 			{
 				p.x = irc.left;
 				p.y = irc.bottom;
 				ClientToScreen(head, &p);
-				if(id = TrackPopupMenu(GetSubMenu(sort_menu, 0), TPM_NONOTIFY | TPM_RETURNCMD, p.x, p.y, 0, parent, NULL))
+				id = TrackPopupMenu(GetSubMenu(sort_menu, 0), TPM_NONOTIFY | TPM_RETURNCMD, p.x, p.y, 0, parent, NULL);
+				if(id)
 				{
 					sort_column = ((const NMLISTVIEW *)nm)->iSubItem;
 
@@ -401,8 +404,8 @@ void WindowList::Sort(int col, WINDOWLIST_SORT_MODE mode)
 {
 	HWND head;
 	HDITEM head_item;
-
-	if(head = ListView_GetHeader(listview))
+	head = ListView_GetHeader(listview);
+	if(head)
 	{
 		head_item.mask = HDI_FORMAT;
 		if(sorted_column != col)
@@ -514,7 +517,7 @@ void WindowList::HandleThemeChange()
 
 int CALLBACK WindowList::sort_items(LPARAM l1, LPARAM l2, LPARAM l3)
 {
-	int r;
+	int r = 0;
 	Window * item;
 	INT64 time_stamp[2];
 
@@ -562,7 +565,7 @@ int CALLBACK WindowList::sort_items(LPARAM l1, LPARAM l2, LPARAM l3)
 			auto h1 = item->GetHandle();
 			item = (Window *)((WindowList *)l3)->item_param((int)l2);
 			auto h2 = item->GetHandle();
-			r = (intptr_t)h1 - (intptr_t)h2;
+			r = (int)((intptr_t)h1 - (intptr_t)h2);
 		}
 		else
 		{
@@ -588,7 +591,7 @@ int CALLBACK WindowList::sort_items(LPARAM l1, LPARAM l2, LPARAM l3)
 			auto h1 = item->GetHandle();
 			item = (Window *)((WindowList *)l3)->item_param((int)l2);
 			auto h2 = item->GetHandle();
-			r = (intptr_t)h2 - (intptr_t)h1;
+			r = (int)((intptr_t)h2 - (intptr_t)h1);
 		}
 		else
 		{
@@ -609,10 +612,9 @@ void WindowList::delete_all_items()
 	count = ListView_GetItemCount(listview);
 	for(i = 0; i < count; i++)
 	{
-		if(item = (Window *)item_param(i))
-		{
+		item = (Window *)item_param(i);
+		if(item)
 			delete item;
-		}
 	}
 	ListView_DeleteAllItems(listview);
 }
@@ -626,29 +628,18 @@ void WindowList::delete_invalid_items()
 	count = ListView_GetItemCount(listview);
 	for(i = count - 1; i >= 0; i--)
 	{
-		if(item = (Window *)item_param(i))
-		{
-			if(check_style(item->GetHandle(), NULL, NULL))
-			{
-				if(show_no_title_window)
-				{
-					continue;
-				}
-				else
-				{
-					n = item->GetCaptionLength();
-					if(n > 0)
-					{
-						continue;
-					}
-				}
-			}
-		}
-
+		item = (Window *)item_param(i);
+		if(!item)
+			continue;
+		if(!check_style(item->GetHandle(), NULL, NULL))
+			continue;
+		if(show_no_title_window)
+			continue;
+		n = item->GetCaptionLength();
+		if(n > 0)
+			continue;
 		if(item)
-		{
 			delete item;
-		}
 		ListView_DeleteItem(listview,i);
 	}
 }
@@ -661,13 +652,9 @@ int WindowList::find_next_selected_item(int index,Window ** witem)
 	i = ListView_GetNextItem(listview, index, LVNI_SELECTED);
 	if(i >= 0)
 	{
-		if(item = (Window *)item_param(i))
-		{
-			if(witem)
-			{
-				*witem = item;
-			}
-		}
+		item = (Window *)item_param(i);
+		if(item && witem)
+			*witem = item;
 	}
 	return i;
 }
@@ -680,26 +667,17 @@ int WindowList::find_window_item(HWND handle, Window ** window)
 	count = ListView_GetItemCount(listview);
 	for(i = 0; i < count; i++)
 	{
-		if(item = (Window *)item_param(i))
-		{
-			if(item->GetHandle() == handle)
-			{
-				break;
-			}
-		}
-	}
-	if(i < count)
-	{
+		item = (Window *)item_param(i);
+		if(!item)
+			continue;
+		if(item->GetHandle() != handle)
+			continue;
 		if(window)
-		{
 			*window = item;
-		}
+		break;
 	}
-	else
-	{
+	if(i >= count)
 		i = -1;
-	}
-
 	return i;
 }
 
@@ -813,10 +791,13 @@ bool WindowList::check_style(HWND window, DWORD * r_style, DWORD * r_extend_styl
 
 void WindowList::get_info_tip(NMLVGETINFOTIP * infotip)
 {
+	UNREFERENCED_PARAMETER(infotip);
 }
 
 BOOL CALLBACK WindowList::update_child_list(HWND hwnd, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(hwnd);
+	UNREFERENCED_PARAMETER(lParam);
 	return FALSE;
 }
 

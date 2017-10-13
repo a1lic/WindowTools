@@ -66,7 +66,7 @@ public:
 	void ClearExtendStylesMask(DWORD mask) {extend_styles_mask &= ~mask;}
 	void ToggleExtendStylesMask(DWORD mask) {extend_styles_mask ^= mask;}
 	HWND GetTargetWindow() {return NULL;}
-	void SetTargetWindow(HWND target) {}
+	void SetTargetWindow(HWND) {}
 
 	HWND GetHandle();
 	void GiveFocus();

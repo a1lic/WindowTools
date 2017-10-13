@@ -147,12 +147,12 @@ void SizeDialog::do_initdialog(LPARAM l)
 
 	/* 仮想画面の幅と左端の座標 */
 	ival = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-	SendMessage(p_xpos, UDM_SETRANGE32, -32768, 32767);
+	SendMessage(p_xpos, UDM_SETRANGE32, (WPARAM)(intptr_t)-32768, 32767);
 	SendMessage(p_width, UDM_SETRANGE32, 0, ival);
 
 	/* 仮想画面の高さと上端の座標 */
 	ival = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-	SendMessage(p_ypos, UDM_SETRANGE32, -32768, 32767);
+	SendMessage(p_ypos, UDM_SETRANGE32, (WPARAM)(intptr_t)-32768, 32767);
 	SendMessage(p_height, UDM_SETRANGE32, 0, ival);
 
 	client_metrics = ((0x8000 & GetAsyncKeyState(VK_SHIFT)) == 0x8000);
@@ -240,6 +240,8 @@ void SizeDialog::do_notify(NMHDR * notify_header)
 					}
 				}
 			}
+			else
+				new_caption = nullptr;
 
 			if(p_callback)
 			{
@@ -441,6 +443,8 @@ void SizeDialog::calc_window_position(ULONG flags, HMONITOR monitor, RECT * r)
 
 BOOL CALLBACK SizeDialog::enum_monitors(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
+	UNREFERENCED_PARAMETER(hdcMonitor);
+	UNREFERENCED_PARAMETER(lprcMonitor);
 	LRESULT item;
 	MONITORINFOEX mi;
 
